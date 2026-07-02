@@ -14,12 +14,12 @@ envContent.split('\n').forEach(line => {
 });
 
 const firebaseConfig = {
-  apiKey: env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: env.NEXT_PUBLIC_FIREBASE_APP_ID
+  apiKey: "AIzaSyB-EitcLkO-Gm9ObJ6hBEFsOurgafUhwA4",
+  authDomain: "portal-publikasi-organisasi.firebaseapp.com",
+  projectId: "portal-publikasi-organisasi",
+  storageBucket: "portal-publikasi-organisasi.firebasestorage.app",
+  messagingSenderId: "516199087734",
+  appId: "1:516199087734:web:1feae60006795960d92957"
 };
 
 console.log("Initializing Firebase...");
@@ -35,7 +35,7 @@ async function createAdmin() {
     console.log(`Logging in user ${ADMIN_EMAIL}...`);
     const userCredential = await signInWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASSWORD);
     const user = userCredential.user;
-    
+
     console.log(`User created with UID: ${user.uid}. Setting admin role in Firestore...`);
     const docRef = doc(db, "users", user.uid);
     await setDoc(docRef, {
@@ -43,7 +43,7 @@ async function createAdmin() {
       role: "admin",
       createdAt: serverTimestamp()
     });
-    
+
     console.log("✅ Admin account created successfully!");
     console.log(`Email: ${ADMIN_EMAIL}`);
     console.log(`Password: ${ADMIN_PASSWORD}`);
