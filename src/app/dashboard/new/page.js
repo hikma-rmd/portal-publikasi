@@ -14,7 +14,7 @@ export default function NewArticle() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [documentType, setDocumentType] = useState("pengumuman");
-  const [file, setFile] = useState(null);
+  const [fileUrl, setFileUrl] = useState("");
   const [loading, setLoading] = useState(false);
   
   const editorRef = useRef(null);
@@ -34,11 +34,12 @@ export default function NewArticle() {
         category,
         documentType,
         content,
+        fileUrl,
         authorId: user.uid,
         status, // 'draft' or 'pending'
       };
       
-      await addArticle(articleData, file);
+      await addArticle(articleData);
       router.push("/dashboard/articles");
     } catch (error) {
       console.error("Error adding article:", error);
@@ -126,22 +127,23 @@ export default function NewArticle() {
               </div>
             </div>
 
-            {/* File Upload */}
+            {/* File URL */}
             <div className={styles.fieldGroup}>
-              <label className={`${styles.label} font-label-md`} htmlFor="fileUpload">
-                Unggah Lampiran (Opsional)
+              <label className={`${styles.label} font-label-md`} htmlFor="fileUrl">
+                Link Dokumen (G-Drive / Opsional)
               </label>
-              <div className={styles.urlContainer} style={{ padding: "0 10px" }}>
+              <div className={styles.urlContainer}>
                 <div className={styles.urlIcon}>
-                  <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>upload_file</span>
+                  <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>link</span>
                 </div>
                 <input 
                   className={`${styles.urlInput} font-body-md`} 
-                  id="fileUpload" 
-                  type="file" 
-                  onChange={(e) => setFile(e.target.files[0])}
+                  id="fileUrl" 
+                  type="url"
+                  placeholder="https://drive.google.com/..." 
+                  value={fileUrl}
+                  onChange={(e) => setFileUrl(e.target.value)}
                   disabled={loading}
-                  style={{ paddingTop: "8px", paddingBottom: "8px" }}
                 />
               </div>
             </div>
