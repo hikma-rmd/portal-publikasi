@@ -1,150 +1,145 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebase/config";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "@/firebase/config";
+import styles from "./page.module.css";
 
-export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
+export default function PublicHomepage() {
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      router.push("/dashboard");
-    } catch (err) {
-      if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
-        setError("Email atau password salah. Silakan coba lagi.");
-      } else {
-        setError("Gagal login: " + err.message);
+  useEffect(() => {
+    const fetchPublishedArticles = async () => {
+      try {
+        setLoading(true);
+        const articlesRef = collection(db, "articles");
+        // Using in-memory sorting since we might not have a composite index set up yet
+        const q = query(
+          articlesRef, 
+          where("status", "==", "Published")
+        );
+        
+        const querySnapshot = await getDocs(q);
+        const fetchedArticles = [];
+        querySnapshot.forEach((doc) => {
+          fetchedArticles.push({ id: doc.id, ...doc.data() });
+        });
+        
+        // Sort by createdAt descending in memory
+        fetchedArticles.sort((a, b) => {
+          const timeA = a.createdAt?.seconds || 0;
+          const timeB = b.createdAt?.seconds || 0;
+          return timeB - timeA;
+        });
+
+        setArticles(fetchedArticles);
+      } catch (error) {
+        console.error("Error fetching articles:", error);
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
+    };
+
+    fetchPublishedArticles();
+  }, []);
+
+  const formatDate = (timestamp) => {
+    if (!timestamp) return "Unknown Date";
+    const date = new Date(timestamp.seconds * 1000);
+    return date.toLocaleDateString("id-ID", { month: "long", day: "numeric", year: "numeric" });
   };
 
   return (
-    <div className="bg-academic-pattern min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Main Login Card */}
-        <div className="bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm p-8 sm:p-10 relative overflow-hidden">
-          {/* Subtle decorative background element in card */}
-          <div className="absolute -top-16 -right-16 w-32 h-32 bg-primary-fixed rounded-full mix-blend-multiply filter opacity-50"></div>
-          <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-primary-fixed rounded-full mix-blend-multiply filter opacity-50"></div>
-          
-          {/* Header Section */}
-          <div className="text-center mb-8 relative z-10">
-            <div className="flex justify-center mb-4">
-              <img 
-                alt="Portal Publikasi Logo" 
-                className="w-20 h-20 object-contain rounded-lg" 
-                src="/logo.svg"
-              />
-            </div>
-            <h1 className="font-headline-md text-on-surface mb-2">Portal Publikasi</h1>
-            <p className="font-body-sm text-on-surface-variant">Organisasi Kampus</p>
+    <div className={styles.container}>
+      {/* Navigation Bar */}
+      <nav className={styles.nav}>
+        <div className={styles.navInner}>
+          <div className={styles.logoGroup}>
+            <img src="/logo.svg" alt="Logo" className={styles.logo} />
+            <span className="font-headline-md text-primary">Portal Publikasi</span>
           </div>
-          
-          {/* Login Form */}
-          <form className="space-y-6 relative z-10" onSubmit={handleLogin}>
-            {/* Email Field */}
-            <div>
-              <label className="block font-label-md text-on-surface mb-2" htmlFor="email">Email Address</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="material-symbols-outlined text-outline text-[20px]">mail</span>
-                </div>
-                <input 
-                  className="block w-full pl-10 pr-3 py-2 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface font-body-sm focus:outline-none focus:ring-4 focus:border-primary transition-shadow" 
-                  id="email" 
-                  name="email" 
-                  placeholder="admin@university.edu" 
-                  required 
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-            </div>
-            
-            {/* Password Field */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="block font-label-md text-on-surface" htmlFor="password">Password</label>
-                <a className="font-label-sm text-primary hover:text-primary-container transition-colors" href="#">Forgot password?</a>
-              </div>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="material-symbols-outlined text-outline text-[20px]">lock</span>
-                </div>
-                <input 
-                  className="block w-full pl-10 pr-3 py-2 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface font-body-sm focus:outline-none focus:ring-4 focus:border-primary transition-shadow" 
-                  id="password" 
-                  name="password" 
-                  placeholder="••••••••" 
-                  required 
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-            </div>
-            
-            {/* Remember Me & Options */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input 
-                  className="h-4 w-4 text-primary border-outline-variant rounded bg-surface-container-lowest" 
-                  id="remember-me" 
-                  name="remember-me" 
-                  type="checkbox"
-                />
-                <label className="ml-2 block font-body-sm text-on-surface-variant" htmlFor="remember-me">
-                  Remember me
-                </label>
-              </div>
-            </div>
-            
-            {/* Submit Button */}
-            <div>
-              {error && (
-                <div className="mb-4 flex items-start gap-2 text-error font-body-sm bg-error-container p-3 rounded-lg border border-error text-left">
-                  <span className="material-symbols-outlined shrink-0 text-[18px] mt-0.5">error</span>
-                  <span>{error}</span>
-                </div>
-              )}
-              <button 
-                className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm font-label-md text-on-primary bg-primary-container hover:bg-primary focus:outline-none focus:ring-4 transition-colors active:opacity-80 disabled:opacity-50" 
-                type="submit"
-                disabled={loading}
-              >
-                {loading ? "Logging in..." : "Login to Portal"}
-              </button>
-            </div>
+          <div>
+            <Link href="/login" className={`${styles.loginBtn} font-label-md`}>
+              Login / Masuk
+            </Link>
+          </div>
+        </div>
+      </nav>
 
-            <div className="text-center mt-4">
-              <span className="font-body-sm text-on-surface-variant">Don't have an account? </span>
-              <a href="/register" className="font-label-sm text-primary hover:text-primary-container transition-colors">
-                Register here
-              </a>
-            </div>
-          </form>
-        </div>
-        
-        {/* Footer Info */}
-        <div className="mt-8 text-center">
-          <p className="font-body-sm text-on-surface-variant">
-            © 2026 CampusPub CMS. All rights reserved.
-          </p>
-        </div>
+      {/* Hero Section */}
+      <div className={styles.hero}>
+         {/* Decorative Elements */}
+         <div className={styles.heroDeco1}></div>
+         <div className={styles.heroDeco2}></div>
+
+         <div className={styles.heroContent}>
+            <h1 className={`${styles.heroTitle} font-headline-xl`}>Temukan Publikasi Terbaik Civitas Akademika</h1>
+            <p className={`${styles.heroSubtitle} font-body-lg`}>
+              Jelajahi berbagai karya tulis ilmiah, opini, dan berita terkini yang ditulis oleh mahasiswa dan dosen di lingkungan kampus kita.
+            </p>
+         </div>
       </div>
+
+      {/* Articles Section */}
+      <div className={styles.articlesSection}>
+        <div className={styles.sectionHeader}>
+          <h2 className="font-headline-lg text-on-surface">Artikel Terbaru</h2>
+          <p className={`${styles.sectionSubtitle} font-body-md`}>Daftar tulisan yang telah ditinjau dan diterbitkan secara resmi.</p>
+        </div>
+
+        {loading ? (
+          <div className={`${styles.emptyState} font-body-lg text-on-surface-variant`}>
+             Memuat artikel...
+          </div>
+        ) : articles.length === 0 ? (
+          <div className={styles.emptyState}>
+             <span className={`material-symbols-outlined ${styles.emptyIcon}`}>article</span>
+             <h3 className="font-headline-md text-on-surface mb-2">Belum ada artikel</h3>
+             <p className="font-body-md text-on-surface-variant">Belum ada artikel yang dipublikasikan saat ini.</p>
+          </div>
+        ) : (
+          <div className={styles.grid}>
+            {articles.map((article) => (
+              <div key={article.id} className={styles.card}>
+                {/* Article Header (Mock Cover Image) */}
+                <div className={styles.cardHeader}>
+                  <span className={`material-symbols-outlined ${styles.cardIcon}`}>news</span>
+                  <div className={`${styles.cardCategory} font-label-sm`}>
+                    {article.category || "General"}
+                  </div>
+                </div>
+                
+                {/* Article Content */}
+                <div className={styles.cardBody}>
+                  <h3 className={`${styles.cardTitle} font-headline-md`}>{article.title}</h3>
+                  <div className={styles.cardSpacer}></div>
+                  
+                  {/* Footer Meta */}
+                  <div className={styles.cardFooter}>
+                    <div className={`${styles.cardDate} font-label-sm`}>
+                      <span className="material-symbols-outlined text-[16px]">calendar_today</span>
+                      {formatDate(article.createdAt)}
+                    </div>
+                    <Link href={`/article/${article.id}`} className={`${styles.readMore} font-label-sm`}>
+                      Baca 
+                      <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <footer className={styles.footer}>
+        <p className="font-body-sm text-on-surface-variant">
+          © 2026 Portal Publikasi Organisasi Kampus. All rights reserved.
+        </p>
+      </footer>
     </div>
   );
 }
