@@ -45,8 +45,11 @@ export default function DashboardLayout({ children }) {
       <aside className={styles.sidebar}>
         {/* Header */}
         <div className={styles.header}>
-          <h1 className={`${styles.title} font-headline-md`}>Portal Terpadu Kampus</h1>
-          <p className="font-body-sm text-on-surface-variant">{displayRole}</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: '32px', color: 'var(--primary)' }}>school</span>
+            <h1 className={`${styles.title} font-headline-md`} style={{ fontSize: '1.25rem', lineHeight: '1.3' }}>Portal Terpadu Himpunan Mahasiswa UIN Alauddin Makassar</h1>
+          </div>
+          <p className="font-body-sm text-on-surface-variant" style={{ marginTop: '8px' }}>{displayRole}</p>
         </div>
 
         {/* Navigation Tabs */}
