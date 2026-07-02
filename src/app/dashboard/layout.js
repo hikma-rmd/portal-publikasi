@@ -59,7 +59,7 @@ export default function DashboardLayout({ children }) {
             <span className="font-label-md">Dashboard</span>
           </Link>
           {/* Inactive Tabs */}
-          {(userRole === "user" || userRole === "admin") && (
+          {userRole === "user" && (
             <>
               <Link href="/dashboard/articles" className={styles.navLink}>
                 <span className={`material-symbols-outlined ${styles.icon}`}>description</span>
