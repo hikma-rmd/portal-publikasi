@@ -2,28 +2,37 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase/config";
+import { createUserProfile } from "@/firebase/db";
+import Link from "next/link";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("user"); // default role
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleLogin = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      // Save profile with role
+      await createUserProfile(user.uid, email, role);
+      
+      // Redirect to dashboard
       router.push("/dashboard");
     } catch (err) {
-      if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
-        setError("Email atau password salah. Silakan coba lagi.");
+      if (err.code === 'auth/email-already-in-use') {
+        setError("Email ini sudah terdaftar. Silakan gunakan email lain atau login.");
       } else {
-        setError("Gagal login: " + err.message);
+        setError("Gagal mendaftar: " + err.message);
       }
     } finally {
       setLoading(false);
@@ -33,7 +42,7 @@ export default function LoginPage() {
   return (
     <div className="bg-academic-pattern min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Main Login Card */}
+        {/* Main Register Card */}
         <div className="bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm p-8 sm:p-10 relative overflow-hidden">
           {/* Subtle decorative background element in card */}
           <div className="absolute -top-16 -right-16 w-32 h-32 bg-primary-fixed rounded-full mix-blend-multiply filter opacity-50"></div>
@@ -44,16 +53,16 @@ export default function LoginPage() {
             <div className="flex justify-center mb-4">
               <img 
                 alt="Portal Publikasi Logo" 
-                className="w-20 h-20 object-contain rounded-lg" 
+                className="w-20 h-20 object-contain" 
                 src="/logo.svg"
               />
             </div>
-            <h1 className="font-headline-md text-on-surface mb-2">Portal Publikasi</h1>
-            <p className="font-body-sm text-on-surface-variant">Organisasi Kampus</p>
+            <h1 className="font-headline-md text-on-surface mb-2">Create an Account</h1>
+            <p className="font-body-sm text-on-surface-variant">Portal Publikasi Kampus</p>
           </div>
           
-          {/* Login Form */}
-          <form className="space-y-6 relative z-10" onSubmit={handleLogin}>
+          {/* Register Form */}
+          <form className="space-y-6 relative z-10" onSubmit={handleRegister}>
             {/* Email Field */}
             <div>
               <label className="block font-label-md text-on-surface mb-2" htmlFor="email">Email Address</label>
@@ -76,10 +85,7 @@ export default function LoginPage() {
             
             {/* Password Field */}
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="block font-label-md text-on-surface" htmlFor="password">Password</label>
-                <a className="font-label-sm text-primary hover:text-primary-container transition-colors" href="#">Forgot password?</a>
-              </div>
+              <label className="block font-label-md text-on-surface mb-2" htmlFor="password">Password</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <span className="material-symbols-outlined text-outline text-[20px]">lock</span>
@@ -93,22 +99,29 @@ export default function LoginPage() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  minLength={6}
                 />
               </div>
             </div>
-            
-            {/* Remember Me & Options */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input 
-                  className="h-4 w-4 text-primary border-outline-variant rounded bg-surface-container-lowest" 
-                  id="remember-me" 
-                  name="remember-me" 
-                  type="checkbox"
-                />
-                <label className="ml-2 block font-body-sm text-on-surface-variant" htmlFor="remember-me">
-                  Remember me
-                </label>
+
+            {/* Role Selection */}
+            <div>
+              <label className="block font-label-md text-on-surface mb-2" htmlFor="role">Role</label>
+              <div className="relative">
+                <select 
+                  className="block w-full pl-3 pr-10 py-2 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface font-body-sm focus:outline-none focus:ring-4 focus:border-primary transition-shadow appearance-none" 
+                  id="role" 
+                  name="role"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                >
+                  <option value="user">User / Author</option>
+                  <option value="editor">Editor</option>
+                  <option value="admin">Admin</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                  <span className="material-symbols-outlined text-outline text-[20px]">expand_more</span>
+                </div>
               </div>
             </div>
             
@@ -125,24 +138,17 @@ export default function LoginPage() {
                 type="submit"
                 disabled={loading}
               >
-                {loading ? "Logging in..." : "Login to Portal"}
+                {loading ? "Registering..." : "Create Account"}
               </button>
             </div>
 
             <div className="text-center mt-4">
-              <span className="font-body-sm text-on-surface-variant">Don't have an account? </span>
-              <a href="/register" className="font-label-sm text-primary hover:text-primary-container transition-colors">
-                Register here
-              </a>
+              <span className="font-body-sm text-on-surface-variant">Already have an account? </span>
+              <Link href="/" className="font-label-sm text-primary hover:text-primary-container transition-colors">
+                Login here
+              </Link>
             </div>
           </form>
-        </div>
-        
-        {/* Footer Info */}
-        <div className="mt-8 text-center">
-          <p className="font-body-sm text-on-surface-variant">
-            © 2026 CampusPub CMS. All rights reserved.
-          </p>
         </div>
       </div>
     </div>

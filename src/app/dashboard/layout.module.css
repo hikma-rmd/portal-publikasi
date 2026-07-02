@@ -1,0 +1,255 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--background);
+  color: var(--on-background);
+}
+
+.sidebar {
+  width: 280px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  background-color: var(--surface-container-lowest);
+  border-right: 1px solid var(--outline-variant);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.02);
+  display: none;
+  flex-direction: column;
+  padding-top: var(--stack-sm);
+  gap: 4px;
+  z-index: 40;
+  transition: all 200ms ease-in-out;
+}
+
+@media (min-width: 768px) {
+  .sidebar {
+    display: flex;
+  }
+}
+
+.header {
+  padding: var(--stack-md) var(--margin-desktop);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  padding: 12px var(--margin-desktop);
+  border-left: 4px solid transparent;
+  color: var(--on-surface-variant);
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.navLink:hover {
+  background-color: var(--surface-container-high);
+  color: var(--on-surface);
+  padding-left: calc(var(--margin-desktop) + 4px);
+}
+
+.navLinkActive {
+  background-color: var(--surface-container);
+  color: var(--primary);
+  border-left-color: var(--primary);
+}
+
+.icon {
+  margin-right: 12px;
+}
+
+.footer {
+  margin-top: auto;
+  width: 100%;
+}
+
+.logoutLink {
+  display: flex;
+  align-items: center;
+  padding: 16px var(--margin-desktop);
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  border-top: 1px solid var(--outline-variant);
+  color: var(--on-surface-variant);
+  transition: all 200ms ease-in-out;
+  cursor: pointer;
+}
+
+.logoutLink:hover {
+  background-color: var(--surface-container);
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+@media (min-width: 768px) {
+  .main {
+    margin-left: 280px;
+  }
+}
+
+.topBar {
+  width: 100%;
+  height: 64px;
+  position: sticky;
+  top: 0;
+  background-color: var(--surface-container-lowest);
+  border-bottom: 1px solid var(--outline-variant);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--margin-desktop);
+}
+
+.topBarLeft {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 100%;
+}
+
+.brand {
+  color: var(--primary);
+  letter-spacing: -0.02em;
+}
+
+.searchBar {
+  display: none;
+  position: relative;
+  align-items: center;
+  height: 100%;
+}
+
+@media (min-width: 1024px) {
+  .searchBar {
+    display: flex;
+  }
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  color: var(--secondary);
+  font-size: 18px;
+}
+
+.searchInput {
+  padding: 8px 16px 8px 40px;
+  background-color: var(--surface-container);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--border-radius-lg);
+  color: var(--on-background);
+  width: 288px;
+  transition: all 200ms;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: transparent;
+  box-shadow: 0 0 0 2px var(--primary);
+}
+
+.topBarRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+}
+
+.actionBtn {
+  padding: 8px;
+  color: var(--secondary);
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 200ms;
+}
+
+.actionBtn:hover {
+  background-color: var(--surface-container);
+}
+
+.actionBtn:active {
+  opacity: 0.8;
+}
+
+.divider {
+  height: 32px;
+  width: 1px;
+  background-color: var(--outline-variant);
+  margin: 0 8px;
+}
+
+.profileInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--border-radius-lg);
+  transition: background-color 200ms;
+}
+
+.profileInfo:hover {
+  background-color: var(--surface-container);
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--outline-variant);
+  object-fit: cover;
+}
+
+.adminName {
+  display: none;
+}
+
+.logoutBtn {
+  margin-left: 8px;
+  color: var(--secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 200ms;
+  display: none;
+}
+
+.logoutBtn:hover {
+  color: var(--primary);
+}
+
+@media (min-width: 640px) {
+  .adminName, .logoutBtn {
+    display: block;
+  }
+}

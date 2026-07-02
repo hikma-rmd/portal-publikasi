@@ -1,0 +1,457 @@
+.container {
+  padding: var(--margin-mobile);
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-md);
+  max-width: var(--container-max);
+  margin: 0 auto;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: var(--margin-desktop);
+  }
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .header {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--secondary);
+  margin-bottom: 8px;
+}
+
+.breadcrumbLink {
+  color: var(--secondary);
+  text-decoration: none;
+  transition: color 200ms;
+}
+
+.breadcrumbLink:hover {
+  color: var(--primary);
+}
+
+.title {
+  color: var(--on-surface);
+}
+
+.statusBadge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: var(--border-radius-full);
+  background-color: var(--tertiary-fixed);
+  color: var(--on-tertiary-fixed-variant);
+}
+
+.layoutGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gutter);
+}
+
+@media (min-width: 1024px) {
+  .layoutGrid {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+
+/* Main Content Area */
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gutter);
+}
+
+@media (min-width: 1024px) {
+  .mainContent {
+    grid-column: span 8;
+  }
+}
+
+.articleCard {
+  background-color: var(--surface-container-lowest);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--border-radius-xl);
+  shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  padding: var(--stack-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-md);
+}
+
+.articleHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--outline-variant);
+  padding-bottom: var(--stack-sm);
+}
+
+.articleTitle {
+  color: var(--on-surface);
+  margin-bottom: 8px;
+}
+
+.metaInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--secondary);
+  flex-wrap: wrap;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.articleBody {
+  color: var(--on-surface-variant);
+  line-height: 1.6;
+}
+
+.articleLead {
+  color: var(--on-surface);
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.articleImage {
+  width: 100%;
+  height: 256px;
+  object-fit: cover;
+  border-radius: var(--border-radius-lg);
+  margin-bottom: 24px;
+  border: 1px solid var(--outline-variant);
+}
+
+.articleSubtitle {
+  color: var(--on-surface);
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+.articleQuote {
+  border-left: 4px solid var(--primary);
+  padding-left: 16px;
+  margin: 24px 0;
+  font-style: italic;
+  color: var(--secondary);
+}
+
+.assetsCard {
+  background-color: var(--surface-container-lowest);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--border-radius-xl);
+  padding: var(--stack-md);
+}
+
+.assetsTitle {
+  color: var(--on-surface);
+  margin-bottom: var(--stack-sm);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.assetsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .assetsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.assetBox {
+  padding: 12px;
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--border-radius-lg);
+  background-color: var(--surface);
+}
+
+.assetLabel {
+  display: block;
+  color: var(--secondary);
+  margin-bottom: 4px;
+}
+
+.assetItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.assetIconBox {
+  width: 40px;
+  height: 40px;
+  background-color: var(--surface-container-highest);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--secondary);
+}
+
+.assetName {
+  display: block;
+  color: var(--on-surface);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.assetSize {
+  display: block;
+  color: var(--secondary);
+}
+
+.tagsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.tag {
+  padding: 4px 8px;
+  background-color: var(--surface-container-high);
+  border-radius: 4px;
+  color: var(--on-surface-variant);
+}
+
+/* Sidebar Area */
+.sidebarContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gutter);
+}
+
+@media (min-width: 1024px) {
+  .sidebarContent {
+    grid-column: span 4;
+  }
+}
+
+.reviewPanel {
+  background-color: var(--surface-container-lowest);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--border-radius-xl);
+  padding: var(--stack-md);
+  position: sticky;
+  top: 96px;
+}
+
+.panelTitle {
+  color: var(--on-surface);
+  margin-bottom: var(--stack-md);
+  border-bottom: 1px solid var(--outline-variant);
+  padding-bottom: 8px;
+}
+
+.checksList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: var(--stack-md);
+}
+
+.checkItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.checkbox {
+  margin-top: 4px;
+  width: 16px;
+  height: 16px;
+  color: var(--primary);
+  background-color: var(--surface);
+  border: 1px solid var(--outline-variant);
+  border-radius: 4px;
+}
+
+.checkLabel {
+  display: block;
+  color: var(--on-surface);
+  transition: color 200ms;
+}
+
+.checkItem:hover .checkLabel {
+  color: var(--primary);
+}
+
+.checkDesc {
+  display: block;
+  color: var(--secondary);
+}
+
+.notesSection {
+  margin-bottom: var(--stack-md);
+}
+
+.notesLabel {
+  display: block;
+  color: var(--on-surface);
+  margin-bottom: 8px;
+}
+
+.notesArea {
+  width: 100%;
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--outline-variant);
+  background-color: var(--surface);
+  padding: 12px;
+  color: var(--on-surface);
+  transition: all 200ms;
+  resize: vertical;
+}
+
+.notesArea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-fixed);
+}
+
+.actionStack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btnApprove {
+  width: 100%;
+  background-color: var(--primary);
+  color: var(--on-primary);
+  padding: 12px;
+  border-radius: var(--border-radius-lg);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 200ms;
+}
+
+.btnApprove:hover {
+  background-color: var(--primary-container);
+  color: var(--on-primary-container);
+}
+
+.secondaryActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.btnDraft {
+  background-color: var(--surface);
+  border: 1px solid var(--outline-variant);
+  color: var(--on-surface-variant);
+  padding: 8px;
+  border-radius: var(--border-radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 200ms;
+}
+
+.btnDraft:hover {
+  background-color: var(--surface-container);
+}
+
+.btnReject {
+  background-color: var(--error-container);
+  color: var(--error);
+  border: none;
+  padding: 8px;
+  border-radius: var(--border-radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 200ms;
+}
+
+.btnReject:hover {
+  background-color: #ffc1ba;
+}
+
+.activityLog {
+  background-color: var(--surface-container-lowest);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--border-radius-xl);
+  padding: var(--stack-md);
+}
+
+.activityTitle {
+  color: var(--on-surface);
+  margin-bottom: 16px;
+}
+
+.timeline {
+  position: relative;
+  border-left: 2px solid var(--surface-variant);
+  margin-left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.timelineItem {
+  position: relative;
+}
+
+.timelineDot {
+  position: absolute;
+  left: -21px;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--outline-variant);
+  background-color: var(--surface-container-lowest);
+}
+
+.timelineDotPrimary {
+  border-color: var(--primary);
+}
+
+.timelineContent {
+  padding-left: 16px;
+}
+
+.timelineLabel {
+  color: var(--on-surface);
+}
+
+.timelineDesc {
+  color: var(--secondary);
+}

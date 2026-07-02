@@ -1,0 +1,310 @@
+.container {
+  padding: var(--margin-mobile);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 0;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: var(--margin-desktop);
+  }
+}
+
+.header {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  margin-bottom: var(--stack-md);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  text-align: left;
+}
+
+@media (min-width: 640px) {
+  .header {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+}
+
+.title {
+  color: var(--on-background);
+}
+
+.subtitle {
+  color: var(--on-surface-variant);
+  margin-top: 4px;
+}
+
+/* Bento Grid */
+.bentoGrid {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gutter);
+}
+
+@media (min-width: 1024px) {
+  .bentoGrid {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+
+/* Left Column */
+.leftCol {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gutter);
+}
+
+@media (min-width: 1024px) {
+  .leftCol {
+    grid-column: span 4 / span 4;
+  }
+}
+
+.identityCard {
+  background-color: var(--surface-container-lowest);
+  border: none;
+  border-radius: var(--border-radius-xl);
+  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.coverArea {
+  height: 128px;
+  width: 100%;
+  background-color: var(--surface-container-high);
+  background-size: cover;
+  background-position: center;
+  border-bottom: none;
+}
+
+.avatarInfo {
+  padding: 0 var(--stack-md) var(--stack-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: -64px;
+  position: relative;
+  z-index: 10;
+}
+
+.avatarWrapper {
+  padding: 4px;
+  background-color: var(--surface-container-lowest);
+  border-radius: 50%;
+  margin-bottom: 16px;
+}
+
+.avatar {
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--surface-container-lowest);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.name {
+  color: var(--on-surface);
+  margin-bottom: 4px;
+}
+
+.roleBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background-color: var(--primary-fixed);
+  color: var(--on-primary-fixed);
+  border-radius: var(--border-radius-full);
+  margin-bottom: 12px;
+}
+
+.contactInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--on-surface-variant);
+}
+
+.iconSmall {
+  font-size: 18px;
+}
+
+.quickStats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border-top: 1px solid var(--surface-container);
+  background-color: rgba(248, 250, 252, 0.5); /* subtle background */
+}
+
+.statItem {
+  padding: 12px;
+  text-align: center;
+}
+
+.statItem:first-child {
+  border-right: 1px solid var(--surface-container);
+}
+
+.statValue {
+  color: var(--on-surface);
+}
+
+.statLabel {
+  color: var(--on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Right Column */
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gutter);
+}
+
+@media (min-width: 1024px) {
+  .rightCol {
+    grid-column: span 8 / span 8;
+  }
+}
+
+.detailsCard {
+  background-color: var(--surface-container-lowest);
+  border: none;
+  border-radius: var(--border-radius-xl);
+  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05);
+  padding: var(--stack-md);
+}
+
+@media (min-width: 1024px) {
+  .detailsCard {
+    padding: var(--stack-lg);
+  }
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--stack-md);
+  border-bottom: 1px solid var(--surface-container);
+  padding-bottom: 16px;
+}
+
+.cardTitle {
+  color: var(--on-surface);
+}
+
+.editBtn {
+  background-color: var(--primary);
+  color: var(--on-primary);
+  padding: 8px 16px;
+  border-radius: var(--border-radius-xl);
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 200ms;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.editBtn:hover {
+  background-color: var(--primary-container);
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: var(--stack-md);
+  column-gap: var(--gutter);
+}
+
+@media (min-width: 768px) {
+  .infoGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.infoLabel {
+  color: var(--on-surface-variant);
+}
+
+.infoValue {
+  color: var(--on-surface);
+}
+
+.securityCard {
+  background-color: var(--surface-container-lowest);
+  border: none;
+  border-radius: var(--border-radius-xl);
+  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05);
+  padding: var(--stack-md);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .securityCard {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+@media (min-width: 1024px) {
+  .securityCard {
+    padding: var(--stack-lg);
+  }
+}
+
+.securityInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.securityTitle {
+  color: var(--on-surface);
+  margin-bottom: 4px;
+}
+
+.securityDesc {
+  color: var(--on-surface-variant);
+}
+
+.changePwdBtn {
+  background-color: var(--surface-container-lowest);
+  color: var(--on-surface);
+  border: 1px solid var(--outline-variant);
+  padding: 8px 16px;
+  border-radius: var(--border-radius-xl);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 200ms;
+  white-space: nowrap;
+}
+
+.changePwdBtn:hover {
+  background-color: var(--surface-container-high);
+}
