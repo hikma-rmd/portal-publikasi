@@ -52,13 +52,13 @@ export default function RegisterPage() {
           <div className="text-center mb-8 relative z-10">
             <div className="flex justify-center mb-4">
               <img 
-                alt="Portal Publikasi Logo" 
-                className="w-20 h-20 object-contain" 
+                alt="Portal Terpadu Kampus Logo" 
+                className="w-20 h-20 object-contain rounded-lg" 
                 src="/logo.svg"
               />
             </div>
-            <h1 className="font-headline-md text-on-surface mb-2">Create an Account</h1>
-            <p className="font-body-sm text-on-surface-variant">Portal Publikasi Kampus</p>
+            <h1 className="font-headline-md text-on-surface mb-2">Portal Terpadu Kampus</h1>
+            <p className="font-body-sm text-on-surface-variant">Buat Akun Baru</p>
           </div>
           
           {/* Register Form */}
@@ -104,26 +104,7 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Role Selection */}
-            <div>
-              <label className="block font-label-md text-on-surface mb-2" htmlFor="role">Role</label>
-              <div className="relative">
-                <select 
-                  className="block w-full pl-3 pr-10 py-2 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface font-body-sm focus:outline-none focus:ring-4 focus:border-primary transition-shadow appearance-none" 
-                  id="role" 
-                  name="role"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                >
-                  <option value="user">User / Author</option>
-                  <option value="editor">Editor</option>
-                  <option value="admin">Admin</option>
-                </select>
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                  <span className="material-symbols-outlined text-outline text-[20px]">expand_more</span>
-                </div>
-              </div>
-            </div>
+
             
             {/* Submit Button */}
             <div>

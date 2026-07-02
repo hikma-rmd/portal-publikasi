@@ -45,7 +45,7 @@ export default function DashboardLayout({ children }) {
       <aside className={styles.sidebar}>
         {/* Header */}
         <div className={styles.header}>
-          <h1 className={`${styles.title} font-headline-md`}>Publication Portal</h1>
+          <h1 className={`${styles.title} font-headline-md`}>Portal Terpadu Kampus</h1>
           <p className="font-body-sm text-on-surface-variant">{displayRole}</p>
         </div>
 
@@ -63,11 +63,11 @@ export default function DashboardLayout({ children }) {
             <>
               <Link href="/dashboard/articles" className={styles.navLink}>
                 <span className={`material-symbols-outlined ${styles.icon}`}>description</span>
-                <span className="font-label-md">My Articles</span>
+                <span className="font-label-md">Dokumen Saya</span>
               </Link>
               <Link href="/dashboard/new" className={styles.navLink}>
                 <span className={`material-symbols-outlined ${styles.icon}`}>add_box</span>
-                <span className="font-label-md">New Article</span>
+                <span className="font-label-md">Buat Dokumen</span>
               </Link>
             </>
           )}
@@ -81,11 +81,11 @@ export default function DashboardLayout({ children }) {
             <>
               <Link href="/dashboard/editor" className={styles.navLink}>
                 <span className={`material-symbols-outlined ${styles.icon}`}>pending_actions</span>
-                <span className="font-label-md">Pending Review</span>
+                <span className="font-label-md">Menunggu Validasi</span>
               </Link>
               <Link href="/dashboard/published" className={styles.navLink}>
                 <span className={`material-symbols-outlined ${styles.icon}`}>task_alt</span>
-                <span className="font-label-md">Published Articles</span>
+                <span className="font-label-md">Arsip Dokumen</span>
               </Link>
             </>
           )}

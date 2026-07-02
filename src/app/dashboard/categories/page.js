@@ -59,14 +59,15 @@ export default function CategoriesPage() {
         {Object.entries(CATEGORY_META).map(([key, meta]) => (
           <Link href={`/dashboard/published?category=${key}`} className={styles.card} key={key}>
             <div className={styles.iconWrapper}>
-              <span className="material-symbols-outlined" style={{ fontSize: "24px" }}>
+              <span className="material-symbols-outlined" style={{ fontSize: "28px" }}>
                 {meta.icon}
               </span>
             </div>
-            <h3 className={`${styles.cardTitle} font-headline-sm`}>{meta.title}</h3>
-            
-            <div className={`${styles.cardCount} font-label-md`}>
-              {loading ? "..." : counts[key]} Articles
+            <div className={styles.cardContent}>
+              <h3 className={`${styles.cardTitle} font-body-lg`}>{meta.title}</h3>
+              <div className={`${styles.cardCount} font-label-sm`}>
+                {loading ? "..." : counts[key]} Articles
+              </div>
             </div>
           </Link>
         ))}

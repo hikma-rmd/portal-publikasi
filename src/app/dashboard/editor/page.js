@@ -32,8 +32,8 @@ export default function EditorDashboard() {
     <div className={styles.container}>
       {/* Page Header */}
       <div className={styles.header}>
-        <h1 className={`${styles.title} font-headline-xl`}>Editor Dashboard</h1>
-        <p className={`${styles.subtitle} font-body-lg`}>Overview of publication status and review queue.</p>
+        <h1 className={`${styles.title} font-headline-xl`}>Dashboard Validasi</h1>
+        <p className={`${styles.subtitle} font-body-lg`}>Pantau status pengajuan dokumen dan antrean validasi.</p>
       </div>
 
       {/* Summary Cards */}
@@ -41,7 +41,7 @@ export default function EditorDashboard() {
         {/* Card 1 */}
         <div className={styles.summaryCard}>
           <div className={styles.cardHeader}>
-            <h3 className={`${styles.cardTitle} font-label-md`}>Total Pending Review</h3>
+            <h3 className={`${styles.cardTitle} font-label-md`}>Total Menunggu Validasi</h3>
             <div className={`${styles.iconWrapper} ${styles.iconPending}`}>
               <span className="material-symbols-outlined">pending_actions</span>
             </div>
@@ -52,7 +52,7 @@ export default function EditorDashboard() {
         {/* Card 2 */}
         <div className={styles.summaryCard}>
           <div className={styles.cardHeader}>
-            <h3 className={`${styles.cardTitle} font-label-md`}>Approved Today</h3>
+            <h3 className={`${styles.cardTitle} font-label-md`}>Disetujui Hari Ini</h3>
             <div className={`${styles.iconWrapper} ${styles.iconApproved}`}>
               <span className="material-symbols-outlined">check_circle</span>
             </div>
@@ -63,7 +63,7 @@ export default function EditorDashboard() {
         {/* Card 3 */}
         <div className={styles.summaryCard}>
           <div className={styles.cardHeader}>
-            <h3 className={`${styles.cardTitle} font-label-md`}>Rejected Today</h3>
+            <h3 className={`${styles.cardTitle} font-label-md`}>Ditolak Hari Ini</h3>
             <div className={`${styles.iconWrapper} ${styles.iconRejected}`}>
               <span className="material-symbols-outlined">cancel</span>
             </div>
@@ -74,7 +74,7 @@ export default function EditorDashboard() {
         {/* Card 4 */}
         <div className={styles.summaryCard}>
           <div className={styles.cardHeader}>
-            <h3 className={`${styles.cardTitle} font-label-md`}>Total Published</h3>
+            <h3 className={`${styles.cardTitle} font-label-md`}>Total Arsip & Tayang</h3>
             <div className={`${styles.iconWrapper} ${styles.iconPublished}`}>
               <span className="material-symbols-outlined">publish</span>
             </div>
@@ -86,7 +86,7 @@ export default function EditorDashboard() {
       {/* Review Queue Table Section */}
       <div className={styles.queueSection}>
         <div className={styles.queueHeader}>
-          <h2 className={`${styles.queueTitle} font-headline-md`}>Review Queue</h2>
+          <h2 className={`${styles.queueTitle} font-headline-md`}>Antrean Validasi</h2>
           <button className={`${styles.filterBtn} font-label-md`}>
             <span className={`material-symbols-outlined ${styles.filterIcon}`}>filter_list</span>
             Filter
@@ -97,22 +97,23 @@ export default function EditorDashboard() {
           <table className={styles.table}>
             <thead className="font-label-md">
               <tr>
-                <th>Title</th>
-                <th>Author ID</th>
-                <th>Category</th>
-                <th>Submission Date</th>
+                <th>Judul</th>
+                <th>ID Pengirim</th>
+                <th>Kategori</th>
+                <th>Jenis</th>
+                <th>Tanggal Masuk</th>
                 <th>Status</th>
-                <th className={styles.textRight}>Action</th>
+                <th className={styles.textRight}>Aksi</th>
               </tr>
             </thead>
             <tbody className="font-body-sm text-on-surface-variant">
               {loading ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-4">Loading review queue...</td>
+                  <td colSpan="7" className="text-center py-4">Memuat antrean...</td>
                 </tr>
               ) : pendingArticles.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-4">No pending articles to review.</td>
+                  <td colSpan="7" className="text-center py-4">Tidak ada dokumen yang perlu divalidasi.</td>
                 </tr>
               ) : (
                 pendingArticles.map((article) => (
@@ -126,13 +127,18 @@ export default function EditorDashboard() {
                     <td>
                       <span className={`${styles.badge} ${styles.badgeCategory}`}>{article.category || "None"}</span>
                     </td>
+                    <td>
+                      <span className="font-label-sm" style={{ padding: "4px 8px", backgroundColor: "var(--surface-container-high)", borderRadius: "12px", textTransform: "uppercase", fontSize: "0.7rem", fontWeight: "600", letterSpacing: "0.5px" }}>
+                        {article.documentType === 'lpj' ? 'LPJ' : 'Mading'}
+                      </span>
+                    </td>
                     <td className={styles.dateText}>{formatDate(article.createdAt)}</td>
                     <td>
-                      <span className={`${styles.badge} ${styles.badgePending}`}>Pending</span>
+                      <span className={`${styles.badge} ${styles.badgePending}`}>Menunggu</span>
                     </td>
                     <td className={styles.textRight}>
                       <Link href={`/dashboard/review/${article.id}`} className={`${styles.reviewBtn} font-label-md`}>
-                        Review
+                        Validasi
                       </Link>
                     </td>
                   </tr>

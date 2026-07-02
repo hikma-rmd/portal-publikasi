@@ -49,12 +49,12 @@ export default function MyArticles() {
       {/* Page Header */}
       <div className={styles.header}>
         <div>
-          <h2 className={`${styles.title} font-headline-lg`}>My Articles</h2>
-          <p className={`${styles.subtitle} font-body-md`}>Manage, edit, and track the status of your publications.</p>
+          <h2 className={`${styles.title} font-headline-lg`}>Dokumen Saya</h2>
+          <p className={`${styles.subtitle} font-body-md`}>Kelola, edit, dan pantau status dokumen Anda.</p>
         </div>
         <Link href="/dashboard/new" className={`${styles.addBtn} font-label-md`}>
           <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>add</span>
-          Add Article
+          Buat Dokumen
         </Link>
       </div>
 
@@ -75,11 +75,11 @@ export default function MyArticles() {
           <div className={styles.filterGroup}>
             <div className={styles.selectContainer}>
               <select className={`${styles.selectInput} font-body-sm`} defaultValue="">
-                <option disabled value="">All Categories</option>
-                <option value="academics">Academics</option>
-                <option value="campus-life">Campus Life</option>
-                <option value="research">Research News</option>
-                <option value="events">Upcoming Events</option>
+                <option disabled value="">Pilih Kategori</option>
+                <option value="beasiswa">Beasiswa</option>
+                <option value="akademik">Akademik</option>
+                <option value="karir">Karir</option>
+                <option value="event">Acara</option>
               </select>
               <span className={`material-symbols-outlined ${styles.selectIcon}`}>arrow_drop_down</span>
             </div>
@@ -95,22 +95,23 @@ export default function MyArticles() {
           <table className={styles.table}>
             <thead>
               <tr>
-                <th className="font-label-sm">Title</th>
-                <th className="font-label-sm">Category</th>
+                <th className="font-label-sm">Judul</th>
+                <th className="font-label-sm">Kategori</th>
+                <th className="font-label-sm">Jenis</th>
                 <th className="font-label-sm">Status</th>
-                <th className={`font-label-sm ${styles.hiddenLg}`}>Created Date</th>
-                <th className={`font-label-sm ${styles.hiddenMd}`}>Last Updated</th>
-                <th className={`font-label-sm ${styles.actionCell}`}>Actions</th>
+                <th className={`font-label-sm ${styles.hiddenLg}`}>Dibuat</th>
+                <th className={`font-label-sm ${styles.hiddenMd}`}>Diperbarui</th>
+                <th className={`font-label-sm ${styles.actionCell}`}>Aksi</th>
               </tr>
             </thead>
             <tbody className="font-body-sm text-on-surface-variant">
               {loading ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-4">Loading articles...</td>
+                  <td colSpan="7" className="text-center py-4">Memuat dokumen...</td>
                 </tr>
               ) : articles.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-4">No articles found. Start by adding one!</td>
+                  <td colSpan="7" className="text-center py-4">Belum ada dokumen. Mulai buat dokumen baru!</td>
                 </tr>
               ) : (
                 articles.map(article => (
@@ -127,8 +128,13 @@ export default function MyArticles() {
                       <span className={`${styles.categoryText} font-body-sm`}>{article.category || "Uncategorized"}</span>
                     </td>
                     <td>
-                      <span className={`${styles.badge} ${getBadgeClass(article.status)} font-label-sm`} style={{ textTransform: 'capitalize' }}>
-                        {article.status}
+                      <span className="font-label-sm" style={{ padding: "4px 8px", backgroundColor: "var(--surface-container-high)", borderRadius: "12px", textTransform: "uppercase", fontSize: "0.7rem", fontWeight: "600", letterSpacing: "0.5px" }}>
+                        {article.documentType === 'lpj' ? 'LPJ' : 'Mading'}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={`${styles.badge} ${getBadgeClass(article.status.toLowerCase())} font-label-sm`} style={{ textTransform: 'capitalize' }}>
+                        {article.status === 'Published' ? 'Disetujui' : article.status === 'Pending Review' ? 'Menunggu' : 'Draft'}
                       </span>
                     </td>
                     <td className={styles.hiddenLg}>{formatDate(article.createdAt)}</td>

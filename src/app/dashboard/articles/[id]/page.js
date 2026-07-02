@@ -3,10 +3,54 @@
 import styles from "./page.module.css";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { getArticleById } from "@/firebase/db";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ArticleDetail() {
   const params = useParams();
   const id = params.id;
+  
+  const { user } = useAuth();
+  const [article, setArticle] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchArticle = async () => {
+      try {
+        const data = await getArticleById(id);
+        setArticle(data);
+      } catch (error) {
+        console.error("Error fetching article:", error);
+      }
+      setLoading(false);
+    };
+    if (id) {
+      fetchArticle();
+    }
+  }, [id]);
+
+  const formatDate = (timestamp) => {
+    if (!timestamp) return "N/A";
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  };
+
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <div className="flex justify-center items-center py-20 font-headline-md">Loading document...</div>
+      </div>
+    );
+  }
+
+  if (!article) {
+    return (
+      <div className={styles.container}>
+        <div className="flex justify-center items-center py-20 font-headline-md">Document not found</div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -28,32 +72,41 @@ export default function ArticleDetail() {
         </div>
       </div>
 
+      {/* Notes / Revision Section (Shows up if rejected or has notes) */}
+      {article.editorialNotes && (
+        <div className="mb-6 bg-error-container text-on-error-container p-6 rounded-2xl border border-error">
+          <div className="flex items-start gap-4">
+            <span className="material-symbols-outlined text-error" style={{ fontSize: "28px" }}>error</span>
+            <div>
+              <h3 className="font-headline-sm mb-2 text-error">Catatan Perbaikan dari Editor</h3>
+              <p className="font-body-md whitespace-pre-wrap">{article.editorialNotes}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Article Header Card */}
       <div className={styles.heroCard}>
         <div className={styles.heroDeco}></div>
         <div className={styles.heroContent}>
           <div className={styles.metaTop}>
-            <span className={`${styles.badgeCategory} font-label-sm`}>Campus Life</span>
-            <span className={`${styles.badgeStatus} font-label-sm`}>
-              <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>check_circle</span>
-              Published
+            <span className={`${styles.badgeCategory} font-label-sm`}>{article.category || "Uncategorized"}</span>
+            <span className="font-label-sm" style={{ padding: "4px 8px", backgroundColor: "var(--surface-container-highest)", borderRadius: "12px", textTransform: "uppercase", fontSize: "0.7rem", fontWeight: "600", letterSpacing: "0.5px" }}>
+              {article.documentType === 'lpj' ? 'LPJ' : 'Mading'}
             </span>
-            <span className={`${styles.dateText} font-body-sm`}>Oct 24, 2026 • 10:30 AM</span>
+            <span className={`${styles.badgeStatus} font-label-sm`} style={{ 
+              backgroundColor: article.status === 'published' ? 'var(--primary-container)' : article.status === 'rejected' ? 'var(--error-container)' : 'var(--secondary-container)',
+              color: article.status === 'published' ? 'var(--on-primary-container)' : article.status === 'rejected' ? 'var(--on-error-container)' : 'var(--on-secondary-container)',
+              textTransform: 'capitalize'
+            }}>
+              <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>
+                {article.status === 'published' ? 'check_circle' : article.status === 'rejected' ? 'cancel' : 'schedule'}
+              </span>
+              {article.status === 'Published' ? 'Disetujui' : article.status === 'Pending Review' ? 'Menunggu' : article.status === 'rejected' ? 'Ditolak' : article.status}
+            </span>
+            <span className={`${styles.dateText} font-body-sm`}>{formatDate(article.createdAt)}</span>
           </div>
-          <h1 className={`${styles.heroTitle} font-headline-xl`}>The Future of Sustainable Architecture on Campus</h1>
-          
-          <div className={styles.authorSection}>
-            <div className={styles.authorAvatar}>
-              <img 
-                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1976&auto=format&fit=crop" 
-                alt="Author" 
-              />
-            </div>
-            <div>
-              <p className={`${styles.authorName} font-label-md`}>Dr. Elena Rostova</p>
-              <p className={`${styles.authorDept} font-body-sm`}>Department of Environmental Design</p>
-            </div>
-          </div>
+          <h1 className={`${styles.heroTitle} font-headline-xl`}>{article.title}</h1>
         </div>
       </div>
 
@@ -63,35 +116,10 @@ export default function ArticleDetail() {
         {/* Main Article Content */}
         <div className={styles.mainCol}>
           <div className={styles.articleCard}>
-            <div className={`${styles.articleBody} font-body-lg`}>
-              <p>
-                The university's latest initiative to integrate sustainable architecture into the core campus infrastructure marks a significant shift in how educational institutions approach long-term environmental responsibility. This project, spearheaded by the Department of Environmental Design, aims to transform traditional learning spaces into living laboratories for ecological innovation.
-              </p>
-              
-              <h2 className={`${styles.articleSubtitle} font-headline-md`}>Key Objectives and Milestones</h2>
-              
-              <p>
-                Over the next five years, the focus will primarily be on retrofitting existing buildings with advanced energy-capture systems, including high-efficiency solar panels and smart climate control networks. These upgrades are projected to reduce the campus carbon footprint by an estimated 40%.
-              </p>
-              
-              <div className={styles.articleImageContainer}>
-                <img 
-                  className={styles.articleImage}
-                  src="https://images.unsplash.com/photo-1518005020951-eccb494ad742?q=80&w=2055&auto=format&fit=crop" 
-                  alt="Sustainable Building Concept" 
-                />
-                <p className={`${styles.imageCaption} font-body-sm`}>
-                  Conceptual rendering of the new Science Wing exterior.
-                </p>
-              </div>
-              
-              <p>
-                Student involvement remains a critical component of the rollout. Engineering and architecture students will have unprecedented access to the structural planning phases, allowing them to earn practical experience while contributing to their own academic environment.
-              </p>
-              
-              <blockquote className={styles.articleQuote}>
-                "We are not just building classrooms; we are constructing a curriculum you can walk through and interact with daily." - Dr. Elena Rostova
-              </blockquote>
+            <div 
+              className={`${styles.articleBody} font-body-lg`}
+              dangerouslySetInnerHTML={{ __html: article.content || "<p>Tidak ada konten teks.</p>" }}
+            >
             </div>
           </div>
         </div>
@@ -103,59 +131,44 @@ export default function ArticleDetail() {
           <div className={styles.sidebarCard}>
             <h3 className={`${styles.cardTitle} font-headline-md`}>
               <span className="material-symbols-outlined text-primary">perm_media</span>
-              Attached Media
+              Lampiran Dokumen
             </h3>
             <div className={styles.mediaList}>
-              <div className={styles.mediaItem}>
-                <div className={styles.mediaIcon}>
-                  <span className="material-symbols-outlined">image</span>
+              {article.fileUrl ? (
+                <div className={styles.mediaItem}>
+                  <div className={styles.mediaIcon}>
+                    <span className="material-symbols-outlined">description</span>
+                  </div>
+                  <div className={styles.mediaInfo} style={{ flex: 1, minWidth: 0, paddingRight: '8px' }}>
+                    <a href={article.fileUrl} target="_blank" rel="noopener noreferrer" className={`${styles.mediaName} font-label-md text-primary hover:underline break-words`}>
+                      {article.fileName || "Unduh Dokumen"}
+                    </a>
+                  </div>
                 </div>
-                <div className={styles.mediaInfo}>
-                  <p className={`${styles.mediaName} font-label-md`}>header_hero_concept.jpg</p>
-                  <p className={`${styles.mediaSize} font-body-sm`}>2.4 MB</p>
-                </div>
-              </div>
-              
-              <div className={styles.mediaItem}>
-                <div className={styles.mediaIcon}>
-                  <span className="material-symbols-outlined">picture_as_pdf</span>
-                </div>
-                <div className={styles.mediaInfo}>
-                  <p className={`${styles.mediaName} font-label-md`}>budget_breakdown_2026.pdf</p>
-                  <p className={`${styles.mediaSize} font-body-sm`}>845 KB</p>
-                </div>
-              </div>
+              ) : (
+                <p className="font-body-sm text-on-surface-variant">Tidak ada file yang dilampirkan.</p>
+              )}
             </div>
           </div>
 
-          {/* SEO & Settings Card */}
+          {/* Details Card */}
           <div className={styles.sidebarCard}>
             <h3 className={`${styles.cardTitle} font-headline-md`}>
               <span className="material-symbols-outlined text-primary">tune</span>
-              Publishing Details
+              Detail Sistem
             </h3>
             <div className={styles.detailsList}>
               <div>
-                <p className={`${styles.detailLabel} font-label-sm`}>Slug</p>
+                <p className={`${styles.detailLabel} font-label-sm`}>ID Dokumen</p>
                 <p className={`${styles.detailValueBox} font-body-sm`}>
-                  /campus-life/sustainable-architecture-initiative
+                  {article.id}
                 </p>
               </div>
               
               <div>
-                <p className={`${styles.detailLabel} font-label-sm`}>Tags</p>
-                <div className={styles.tagsContainer}>
-                  <span className={`${styles.tag} font-body-sm`}>Sustainability</span>
-                  <span className={`${styles.tag} font-body-sm`}>Architecture</span>
-                  <span className={`${styles.tag} font-body-sm`}>Initiatives</span>
-                </div>
-              </div>
-              
-              <div>
-                <p className={`${styles.detailLabel} font-label-sm`}>Visibility</p>
-                <p className={`${styles.visibilityRow} font-body-md`}>
-                  <span className="material-symbols-outlined text-primary" style={{ fontSize: "18px" }}>public</span>
-                  Public (All Students & Faculty)
+                <p className={`${styles.detailLabel} font-label-sm`}>Terakhir Diperbarui</p>
+                <p className="font-body-md text-on-surface">
+                  {formatDate(article.updatedAt)}
                 </p>
               </div>
             </div>

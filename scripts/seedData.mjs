@@ -22,53 +22,63 @@ const ADMIN_PASSWORD = "adminpassword123";
 const sampleArticles = [
   {
     title: "Pengaruh Teknologi AI dalam Pendidikan",
-    category: "Teknologi",
+    category: "akademik",
+    documentType: "pengumuman",
     status: "Published"
   },
   {
     title: "Meningkatkan Kesadaran Kesehatan Mental Mahasiswa",
-    category: "Kesehatan",
+    category: "kemahasiswaan",
+    documentType: "pengumuman",
     status: "Pending Review"
   },
   {
-    title: "Strategi Menulis Karya Ilmiah yang Tembus Jurnal Internasional",
-    category: "Akademik",
-    status: "Draft"
+    title: "LPJ Kegiatan Bakti Sosial BEM",
+    category: "event",
+    documentType: "lpj",
+    status: "Published"
   },
   {
     title: "Pengembangan Kurikulum Berbasis Kampus Merdeka",
-    category: "Pendidikan",
+    category: "akademik",
+    documentType: "pengumuman",
     status: "Published"
   },
   {
-    title: "Dampak Perubahan Iklim terhadap Pertanian Lokal",
-    category: "Lingkungan",
-    status: "Published"
+    title: "LPJ Seminar Nasional Teknologi",
+    category: "event",
+    documentType: "lpj",
+    status: "Draft"
   },
   {
     title: "Panduan Mengajukan Beasiswa Luar Negeri",
-    category: "Akademik",
+    category: "beasiswa",
+    documentType: "pengumuman",
     status: "Draft"
   },
   {
     title: "Peran Organisasi Mahasiswa dalam Membangun Soft Skills",
-    category: "Kemahasiswaan",
+    category: "kemahasiswaan",
+    documentType: "pengumuman",
     status: "Pending Review"
   },
   {
-    title: "Inovasi Energi Terbarukan di Lingkungan Kampus",
-    category: "Teknologi",
+    title: "LPJ UKM Paduan Suara - Kompetisi Nasional",
+    category: "kemahasiswaan",
+    documentType: "lpj",
     status: "Published"
   },
   {
     title: "Pentingnya Literasi Keuangan Bagi Mahasiswa Rantau",
-    category: "Ekonomi",
+    category: "akademik",
+    documentType: "pengumuman",
     status: "Published"
   },
   {
-    title: "Mengatasi Prokrastinasi Selama Penyusunan Skripsi",
-    category: "Psikologi",
-    status: "Draft"
+    title: "LPJ Dana Kemahasiswaan Fakultas",
+    category: "akademik",
+    documentType: "lpj",
+    status: "Pending Review"
   }
 ];
 
@@ -86,6 +96,7 @@ async function seedData() {
       await addDoc(articlesRef, {
         title: article.title,
         category: article.category,
+        documentType: article.documentType,
         status: article.status,
         authorId: user.uid,
         createdAt: serverTimestamp(),

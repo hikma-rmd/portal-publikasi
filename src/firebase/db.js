@@ -19,21 +19,24 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 /**
  * Creates a new article in Firestore.
  * @param {Object} articleData - The article details
- * @param {File} [featuredImageFile] - Optional image file to upload
+ * @param {File} [attachmentFile] - Optional file to upload (PDF, DOCX, etc.)
  */
-export const addArticle = async (articleData, featuredImageFile = null) => {
-  let imageUrl = null;
+export const addArticle = async (articleData, attachmentFile = null) => {
+  let fileUrl = null;
+  let fileName = null;
   
-  if (featuredImageFile) {
-    // Upload image to storage
-    const storageRef = ref(storage, `articles/${Date.now()}_${featuredImageFile.name}`);
-    const uploadResult = await uploadBytes(storageRef, featuredImageFile);
-    imageUrl = await getDownloadURL(uploadResult.ref);
+  if (attachmentFile) {
+    // Upload file to storage
+    const storageRef = ref(storage, `documents/${Date.now()}_${attachmentFile.name}`);
+    const uploadResult = await uploadBytes(storageRef, attachmentFile);
+    fileUrl = await getDownloadURL(uploadResult.ref);
+    fileName = attachmentFile.name;
   }
 
   const newArticle = {
     ...articleData,
-    featuredImage: imageUrl,
+    fileUrl: fileUrl,
+    fileName: fileName,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   };

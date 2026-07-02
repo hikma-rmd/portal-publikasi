@@ -18,7 +18,8 @@ export default function PublicHomepage() {
         // Using in-memory sorting since we might not have a composite index set up yet
         const q = query(
           articlesRef, 
-          where("status", "==", "Published")
+          where("status", "==", "Published"),
+          where("documentType", "==", "pengumuman")
         );
         
         const querySnapshot = await getDocs(q);
@@ -58,7 +59,7 @@ export default function PublicHomepage() {
         <div className={styles.navInner}>
           <div className={styles.logoGroup}>
             <img src="/logo.svg" alt="Logo" className={styles.logo} />
-            <span className="font-headline-md text-primary">Portal Publikasi</span>
+            <span className="font-headline-md text-primary">Portal Terpadu Kampus</span>
           </div>
           <div>
             <Link href="/login" className={`${styles.loginBtn} font-label-md`}>
@@ -75,9 +76,9 @@ export default function PublicHomepage() {
          <div className={styles.heroDeco2}></div>
 
          <div className={styles.heroContent}>
-            <h1 className={`${styles.heroTitle} font-headline-xl`}>Temukan Publikasi Terbaik Civitas Akademika</h1>
+            <h1 className={`${styles.heroTitle} font-headline-xl`}>Mading Digital & Validasi Kampus</h1>
             <p className={`${styles.heroSubtitle} font-body-lg`}>
-              Jelajahi berbagai karya tulis ilmiah, opini, dan berita terkini yang ditulis oleh mahasiswa dan dosen di lingkungan kampus kita.
+              Pusat informasi resmi mahasiswa dan layanan pengajuan dokumen/LPJ terpadu organisasi kampus.
             </p>
          </div>
       </div>
@@ -85,19 +86,19 @@ export default function PublicHomepage() {
       {/* Articles Section */}
       <div className={styles.articlesSection}>
         <div className={styles.sectionHeader}>
-          <h2 className="font-headline-lg text-on-surface">Artikel Terbaru</h2>
-          <p className={`${styles.sectionSubtitle} font-body-md`}>Daftar tulisan yang telah ditinjau dan diterbitkan secara resmi.</p>
+          <h2 className="font-headline-lg text-on-surface">Pengumuman Terbaru</h2>
+          <p className={`${styles.sectionSubtitle} font-body-md`}>Daftar informasi dan kegiatan kampus yang telah disetujui.</p>
         </div>
 
         {loading ? (
           <div className={`${styles.emptyState} font-body-lg text-on-surface-variant`}>
-             Memuat artikel...
+             Memuat pengumuman...
           </div>
         ) : articles.length === 0 ? (
           <div className={styles.emptyState}>
              <span className={`material-symbols-outlined ${styles.emptyIcon}`}>article</span>
-             <h3 className="font-headline-md text-on-surface mb-2">Belum ada artikel</h3>
-             <p className="font-body-md text-on-surface-variant">Belum ada artikel yang dipublikasikan saat ini.</p>
+             <h3 className="font-headline-md text-on-surface mb-2">Belum ada pengumuman</h3>
+             <p className="font-body-md text-on-surface-variant">Belum ada pengumuman yang tayang saat ini.</p>
           </div>
         ) : (
           <div className={styles.grid}>
@@ -107,7 +108,11 @@ export default function PublicHomepage() {
                 <div className={styles.cardHeader}>
                   <span className={`material-symbols-outlined ${styles.cardIcon}`}>news</span>
                   <div className={`${styles.cardCategory} font-label-sm`}>
-                    {article.category || "General"}
+                    {article.category === 'beasiswa' ? 'Beasiswa' : 
+                     article.category === 'akademik' ? 'Akademik' :
+                     article.category === 'karir' ? 'Karir' :
+                     article.category === 'event' ? 'Event' :
+                     article.category === 'kemahasiswaan' ? 'Prestasi' : 'Umum'}
                   </div>
                 </div>
                 
@@ -137,7 +142,7 @@ export default function PublicHomepage() {
       {/* Footer */}
       <footer className={styles.footer}>
         <p className="font-body-sm text-on-surface-variant">
-          © 2026 Portal Publikasi Organisasi Kampus. All rights reserved.
+          © 2026 Portal Terpadu Organisasi Kampus. All rights reserved.
         </p>
       </footer>
     </div>

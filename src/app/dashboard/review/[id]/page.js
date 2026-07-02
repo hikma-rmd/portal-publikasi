@@ -31,7 +31,7 @@ export default function ReviewArticle() {
 
   const handleStatusUpdate = async (newStatus) => {
     if (newStatus === "rejected" && !notes.trim()) {
-      alert("Please provide editorial notes for rejection.");
+      alert("Harap berikan catatan perbaikan untuk dokumen yang ditolak.");
       return;
     }
     
@@ -134,19 +134,23 @@ export default function ReviewArticle() {
             </h3>
             
             <div className={styles.assetsGrid}>
-              {article.docUrl && (
+              {article.fileUrl ? (
                 <div className={styles.assetBox}>
-                  <span className={`${styles.assetLabel} font-label-sm`}>Documentation URL</span>
+                  <span className={`${styles.assetLabel} font-label-sm`}>Dokumen Lampiran</span>
                   <div className={styles.assetItem}>
                     <div className={styles.assetIconBox}>
-                      <span className="material-symbols-outlined">link</span>
+                      <span className="material-symbols-outlined">description</span>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <a href={article.docUrl} target="_blank" rel="noopener noreferrer" className={`${styles.assetName} font-body-sm hover:underline text-primary`}>
-                        {article.docUrl}
+                      <a href={article.fileUrl} target="_blank" rel="noopener noreferrer" className={`${styles.assetName} font-body-sm hover:underline text-primary`}>
+                        Buka Dokumen ({article.fileName || "File"})
                       </a>
                     </div>
                   </div>
+                </div>
+              ) : (
+                <div className={styles.assetBox}>
+                  <p className="font-body-sm text-on-surface-variant">Tidak ada lampiran dokumen.</p>
                 </div>
               )}
             </div>
@@ -161,10 +165,10 @@ export default function ReviewArticle() {
             
             {/* Notes */}
             <div className={styles.notesSection}>
-              <label className={`${styles.notesLabel} font-label-md`}>Editorial Notes (Visible to Author)</label>
+              <label className={`${styles.notesLabel} font-label-md`}>Catatan Perbaikan (Dilihat Mahasiswa)</label>
               <textarea 
                 className={`${styles.notesArea} font-body-sm`} 
-                placeholder="Provide feedback or required changes here..." 
+                placeholder="Tulis alasan penolakan atau perbaikan yang dibutuhkan..." 
                 rows="4"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
@@ -181,7 +185,7 @@ export default function ReviewArticle() {
                   disabled={actionLoading}
                 >
                   <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>publish</span>
-                  Approve & Publish
+                  Setujui & Tayangkan
                 </button>
                 
                 <div className={styles.secondaryActions}>
@@ -191,7 +195,7 @@ export default function ReviewArticle() {
                     disabled={actionLoading}
                   >
                     <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>block</span>
-                    Reject
+                    Tolak / Minta Revisi
                   </button>
                 </div>
               </div>

@@ -97,7 +97,7 @@ export default function StaffDashboard() {
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
           <div className={styles.statHeader}>
-            <span className={`${styles.statLabel} font-label-md`}>{userRole === 'user' ? 'My Articles' : 'Total Articles'}</span>
+            <span className={`${styles.statLabel} font-label-md`}>{userRole === 'user' ? 'Dokumen Saya' : 'Total Dokumen'}</span>
             <div className={`${styles.statIconWrapper} ${styles.statIconWrapperPrimary}`}>
               <span className="material-symbols-outlined">library_books</span>
             </div>
@@ -112,7 +112,7 @@ export default function StaffDashboard() {
 
         <div className={styles.statCard}>
           <div className={styles.statHeader}>
-            <span className={`${styles.statLabel} font-label-md`}>Draft Articles</span>
+            <span className={`${styles.statLabel} font-label-md`}>Draft Dokumen</span>
             <div className={`${styles.statIconWrapper} ${styles.statIconWrapperSecondary}`}>
               <span className="material-symbols-outlined">edit_document</span>
             </div>
@@ -128,7 +128,7 @@ export default function StaffDashboard() {
         {(userRole === "admin" || userRole === "editor") && (
           <div className={styles.statCard}>
             <div className={styles.statHeader}>
-              <span className={`${styles.statLabel} font-label-md`}>Pending Review</span>
+              <span className={`${styles.statLabel} font-label-md`}>Menunggu Validasi</span>
               <div className={`${styles.statIconWrapper} ${styles.statIconWrapperTertiary}`}>
                 <span className="material-symbols-outlined">pending_actions</span>
               </div>
@@ -144,7 +144,7 @@ export default function StaffDashboard() {
 
         <div className={styles.statCard}>
           <div className={styles.statHeader}>
-            <span className={`${styles.statLabel} font-label-md`}>Published</span>
+            <span className={`${styles.statLabel} font-label-md`}>Disetujui / Tayang</span>
             <div className={`${styles.statIconWrapper} ${styles.statIconWrapperAction}`}>
               <span className="material-symbols-outlined">task_alt</span>
             </div>
@@ -162,38 +162,44 @@ export default function StaffDashboard() {
       <div className={styles.lowerGrid}>
         <div className={styles.tableSection}>
           <div className={styles.sectionHeader}>
-            <h3 className={`${styles.sectionTitle} font-headline-md`}>Recent Articles</h3>
+            <h3 className={`${styles.sectionTitle} font-headline-md`}>Dokumen Terbaru</h3>
             <Link href="/dashboard/articles" className={`${styles.viewAll} font-label-md`}>
-              View All <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>arrow_forward</span>
+              Lihat Semua <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>arrow_forward</span>
             </Link>
           </div>
           <div className={styles.tableContainer}>
             <table className={styles.table}>
               <thead className="font-label-sm">
                 <tr>
-                  <th>Title</th>
-                  <th>Category</th>
+                  <th>Judul</th>
+                  <th>Kategori</th>
+                  <th>Jenis</th>
                   <th>Status</th>
-                  <th className={styles.textRight}>Date</th>
+                  <th className={styles.textRight}>Tanggal</th>
                 </tr>
               </thead>
               <tbody className="font-body-sm text-on-background">
                 {loading ? (
-                  <tr><td colSpan="4" style={{textAlign: "center", padding: "20px"}}>Loading data...</td></tr>
+                  <tr><td colSpan="5" style={{textAlign: "center", padding: "20px"}}>Loading data...</td></tr>
                 ) : recentArticles.length === 0 ? (
-                  <tr><td colSpan="4" style={{textAlign: "center", padding: "20px"}}>No articles found.</td></tr>
+                  <tr><td colSpan="5" style={{textAlign: "center", padding: "20px"}}>No documents found.</td></tr>
                 ) : (
                   recentArticles.map((article) => (
                     <tr key={article.id} className={styles.tableRow}>
                       <td className={`${styles.tableRowTitle} font-label-md`}>{article.title}</td>
                       <td className={styles.tableRowSubtitle}>{article.category || "Uncategorized"}</td>
                       <td>
+                        <span className="font-label-sm" style={{ padding: "4px 8px", backgroundColor: "var(--surface-container-high)", borderRadius: "12px", textTransform: "uppercase", fontSize: "0.7rem", fontWeight: "600", letterSpacing: "0.5px" }}>
+                          {article.documentType === 'lpj' ? 'LPJ' : 'Mading'}
+                        </span>
+                      </td>
+                      <td>
                         <span className={`${styles.badge} ${
                           article.status === 'Published' ? styles.badgePublished :
                           article.status === 'Pending Review' ? styles.badgePending :
                           styles.badgeDraft
                         } font-label-sm`}>
-                          {article.status}
+                          {article.status === 'Published' ? 'Disetujui' : article.status === 'Pending Review' ? 'Menunggu' : 'Draft'}
                         </span>
                       </td>
                       <td className={`${styles.tableRowSubtitle} ${styles.textRight}`}>
@@ -217,7 +223,7 @@ export default function StaffDashboard() {
               <Link href="/dashboard/new" style={{width: "100%", textDecoration: "none"}}>
                 <button className={`${styles.btnPrimary} font-label-md`}>
                   <span className="material-symbols-outlined">add_circle</span>
-                  Create New Article
+                  Buat Dokumen Baru
                 </button>
               </Link>
             )}

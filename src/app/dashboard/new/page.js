@@ -13,7 +13,8 @@ export default function NewArticle() {
   
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
-  const [docUrl, setDocUrl] = useState("");
+  const [documentType, setDocumentType] = useState("pengumuman");
+  const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   
   const editorRef = useRef(null);
@@ -31,13 +32,13 @@ export default function NewArticle() {
       const articleData = {
         title,
         category,
-        docUrl,
+        documentType,
         content,
         authorId: user.uid,
         status, // 'draft' or 'pending'
       };
       
-      await addArticle(articleData);
+      await addArticle(articleData, file);
       router.push("/dashboard/articles");
     } catch (error) {
       console.error("Error adding article:", error);
@@ -51,8 +52,8 @@ export default function NewArticle() {
     <div className={styles.container}>
       {/* Page Header */}
       <div className={styles.header}>
-        <h2 className={`${styles.title} font-headline-lg`}>Create New Article</h2>
-        <p className={`${styles.subtitle} font-body-md`}>Draft and format official communications for the university portal.</p>
+        <h2 className={`${styles.title} font-headline-lg`}>Buat Dokumen Baru</h2>
+        <p className={`${styles.subtitle} font-body-md`}>Buat draf pengumuman publik atau laporan pertanggungjawaban (LPJ).</p>
       </div>
 
       {/* Main Form Card (Bento/Spacious Style) */}
@@ -62,12 +63,12 @@ export default function NewArticle() {
           {/* Top Row: Title */}
           <div className={styles.fieldGroup}>
             <label className={`${styles.label} font-label-md`} htmlFor="articleTitle">
-              Article Title <span className={styles.required}>*</span>
+              Judul Dokumen <span className={styles.required}>*</span>
             </label>
             <input 
               className={`${styles.input} font-body-lg`} 
               id="articleTitle" 
-              placeholder="Enter a clear, descriptive title..." 
+              placeholder="Masukkan judul dokumen dengan jelas..." 
               type="text" 
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -77,10 +78,32 @@ export default function NewArticle() {
 
           {/* Second Row: Category & URL */}
           <div className={styles.twoCols}>
+            {/* Document Type Dropdown */}
+            <div className={styles.fieldGroup}>
+              <label className={`${styles.label} font-label-md`} htmlFor="documentType">
+                Jenis Dokumen
+              </label>
+              <div className={styles.selectContainer}>
+                <select 
+                  className={`${styles.selectInput} font-body-md`} 
+                  id="documentType" 
+                  value={documentType}
+                  onChange={(e) => setDocumentType(e.target.value)}
+                  disabled={loading}
+                >
+                  <option value="pengumuman">Pengumuman Publik (Mading)</option>
+                  <option value="lpj">Laporan Pertanggungjawaban (LPJ)</option>
+                </select>
+                <div className={styles.selectIcon}>
+                  <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>expand_more</span>
+                </div>
+              </div>
+            </div>
+
             {/* Category Dropdown */}
             <div className={styles.fieldGroup}>
               <label className={`${styles.label} font-label-md`} htmlFor="category">
-                Primary Category
+                Kategori
               </label>
               <div className={styles.selectContainer}>
                 <select 
@@ -90,11 +113,12 @@ export default function NewArticle() {
                   onChange={(e) => setCategory(e.target.value)}
                   disabled={loading}
                 >
-                  <option disabled value="">Select a category...</option>
-                  <option value="announcements">Official Announcements</option>
-                  <option value="events">Campus Events</option>
-                  <option value="research">Research & Innovation</option>
-                  <option value="student-life">Student Life</option>
+                  <option disabled value="">Pilih kategori...</option>
+                  <option value="beasiswa">Beasiswa & Bantuan</option>
+                  <option value="akademik">Akademik & Perkuliahan</option>
+                  <option value="karir">Karir & Magang</option>
+                  <option value="event">Acara Kampus (Event)</option>
+                  <option value="kemahasiswaan">Prestasi & Kemahasiswaan</option>
                 </select>
                 <div className={styles.selectIcon}>
                   <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>expand_more</span>
@@ -102,23 +126,22 @@ export default function NewArticle() {
               </div>
             </div>
 
-            {/* Documentation URL */}
+            {/* File Upload */}
             <div className={styles.fieldGroup}>
-              <label className={`${styles.label} font-label-md`} htmlFor="docUrl">
-                Supporting Documentation URL
+              <label className={`${styles.label} font-label-md`} htmlFor="fileUpload">
+                Unggah Lampiran (Opsional)
               </label>
-              <div className={styles.urlContainer}>
+              <div className={styles.urlContainer} style={{ padding: "0 10px" }}>
                 <div className={styles.urlIcon}>
-                  <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>link</span>
+                  <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>upload_file</span>
                 </div>
                 <input 
                   className={`${styles.urlInput} font-body-md`} 
-                  id="docUrl" 
-                  placeholder="https://..." 
-                  type="url" 
-                  value={docUrl}
-                  onChange={(e) => setDocUrl(e.target.value)}
+                  id="fileUpload" 
+                  type="file" 
+                  onChange={(e) => setFile(e.target.files[0])}
                   disabled={loading}
+                  style={{ paddingTop: "8px", paddingBottom: "8px" }}
                 />
               </div>
             </div>
@@ -127,7 +150,7 @@ export default function NewArticle() {
           {/* Third Row: Rich Text Editor */}
           <div className={styles.editorContainer}>
             <label className={`${styles.label} font-label-md`} style={{ marginBottom: "8px" }}>
-              Article Content
+              Isi Dokumen / Laporan
             </label>
             <div className={styles.editorBox}>
               {/* Toolbar */}
@@ -175,7 +198,7 @@ export default function NewArticle() {
                 className={`${styles.editorContent} font-body-md`} 
                 contentEditable={!loading}
                 suppressContentEditableWarning={true}
-                placeholder="Start writing your article here..."
+                placeholder="Mulai menulis dokumen di sini..."
               ></div>
             </div>
             <p className={`${styles.helpText} font-body-sm`}>
@@ -199,7 +222,7 @@ export default function NewArticle() {
               disabled={loading}
             >
               <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>save</span>
-              Save Draft
+              Simpan Draft
             </button>
             <button 
               className={`${styles.btn} ${styles.btnSubmit} font-label-md`} 
@@ -208,7 +231,7 @@ export default function NewArticle() {
               disabled={loading}
             >
               <span className="material-symbols-outlined" style={{ fontSize: "18px", fontVariationSettings: "'FILL' 1" }}>send</span>
-              Submit for Review
+              Ajukan Validasi
             </button>
           </div>
         </div>
