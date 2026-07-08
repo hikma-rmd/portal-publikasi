@@ -1,29 +1,64 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import styles from "./page.module.css";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { addArticle, updateArticle } from "@/firebase/db";
+import { getArticleById, updateArticle } from "@/firebase/db";
 
-export default function NewArticle() {
+export default function EditArticle() {
   const { user } = useAuth();
   const router = useRouter();
+  const params = useParams();
+  const id = params.id;
   
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [documentType, setDocumentType] = useState("pengumuman");
   const [fileUrl, setFileUrl] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [articleId, setArticleId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [autosaveStatus, setAutosaveStatus] = useState("");
   const [lastSavedData, setLastSavedData] = useState("");
   
   const editorRef = useRef(null);
 
   useEffect(() => {
-    if (!user) return;
+    const fetchArticle = async () => {
+      try {
+        const data = await getArticleById(id);
+        setTitle(data.title || "");
+        setCategory(data.category || "");
+        setDocumentType(data.documentType || "pengumuman");
+        setFileUrl(data.fileUrl || "");
+        
+        if (editorRef.current) {
+          editorRef.current.innerHTML = data.content || "";
+        }
+        
+        const currentData = JSON.stringify({ 
+          title: data.title || "", 
+          category: data.category || "", 
+          documentType: data.documentType || "pengumuman", 
+          content: data.content || "", 
+          fileUrl: data.fileUrl || "" 
+        });
+        setLastSavedData(currentData);
+        
+      } catch (error) {
+        console.error("Error fetching article:", error);
+        alert("Failed to load document data.");
+      }
+      setLoading(false);
+    };
+    if (id) {
+      fetchArticle();
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (!user || loading) return;
     
     const interval = setInterval(async () => {
       const content = editorRef.current?.innerHTML || "";
@@ -41,19 +76,12 @@ export default function NewArticle() {
             content,
             fileUrl,
             authorId: user.uid,
-            status: 'draft',
           };
           
-          let newId = articleId;
-          if (articleId) {
-            await updateArticle(articleId, articleData);
-          } else {
-            newId = await addArticle(articleData);
-            setArticleId(newId);
-          }
+          await updateArticle(id, articleData);
           
           setLastSavedData(currentData);
-          setAutosaveStatus("Draft tersimpan (Autosave)");
+          setAutosaveStatus("Perubahan tersimpan (Autosave)");
           setTimeout(() => setAutosaveStatus(""), 3000);
         } catch (e) {
           console.error(e);
@@ -63,7 +91,7 @@ export default function NewArticle() {
     }, 15000);
     
     return () => clearInterval(interval);
-  }, [title, category, documentType, fileUrl, articleId, lastSavedData, user]);
+  }, [title, category, documentType, fileUrl, id, lastSavedData, user, loading]);
 
   const handleSubmit = async (status) => {
     if (status === 'pending' && !title.trim()) {
@@ -71,7 +99,7 @@ export default function NewArticle() {
       return;
     }
     
-    setLoading(true);
+    setSaving(true);
     try {
       const content = editorRef.current.innerHTML;
       const finalTitle = title.trim() || "Untitled Draft";
@@ -86,28 +114,32 @@ export default function NewArticle() {
         status, // 'draft' or 'pending'
       };
       
-      if (articleId) {
-        await updateArticle(articleId, articleData);
-      } else {
-        await addArticle(articleData);
-      }
+      await updateArticle(id, articleData);
       
-      router.push("/dashboard/articles");
+      router.push(`/dashboard/articles/${id}`);
     } catch (error) {
-      console.error("Error adding article:", error);
+      console.error("Error updating article:", error);
       alert("Failed to save article");
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <div className="flex justify-center items-center py-20 font-headline-md">Loading document...</div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
       {/* Page Header */}
       <div className={styles.header}>
         <div>
-          <h2 className={`${styles.title} font-headline-lg`}>Buat Dokumen Baru</h2>
-          <p className={`${styles.subtitle} font-body-md`}>Buat draf pengumuman publik atau laporan pertanggungjawaban (LPJ).</p>
+          <h2 className={`${styles.title} font-headline-lg`}>Edit Dokumen</h2>
+          <p className={`${styles.subtitle} font-body-md`}>Ubah detail atau konten dari dokumen Anda.</p>
         </div>
         {autosaveStatus && (
           <div className="font-label-md" style={{ padding: '8px 16px', backgroundColor: 'var(--surface-container-high)', borderRadius: '20px', color: 'var(--on-surface-variant)' }}>
@@ -132,7 +164,7 @@ export default function NewArticle() {
               type="text" 
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              disabled={loading}
+              disabled={saving}
             />
           </div>
 
@@ -149,7 +181,7 @@ export default function NewArticle() {
                   id="documentType" 
                   value={documentType}
                   onChange={(e) => setDocumentType(e.target.value)}
-                  disabled={loading}
+                  disabled={saving}
                 >
                   <option value="pengumuman">Pengumuman Publik (Mading)</option>
                   <option value="lpj">Laporan Pertanggungjawaban (LPJ)</option>
@@ -171,7 +203,7 @@ export default function NewArticle() {
                   id="category" 
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  disabled={loading}
+                  disabled={saving}
                 >
                   <option disabled value="">Pilih kategori...</option>
                   <option value="beasiswa">Beasiswa & Bantuan</option>
@@ -202,7 +234,7 @@ export default function NewArticle() {
                   placeholder="https://drive.google.com/..." 
                   value={fileUrl}
                   onChange={(e) => setFileUrl(e.target.value)}
-                  disabled={loading}
+                  disabled={saving}
                 />
               </div>
             </div>
@@ -257,13 +289,13 @@ export default function NewArticle() {
               <div 
                 ref={editorRef}
                 className={`${styles.editorContent} font-body-md`} 
-                contentEditable={!loading}
+                contentEditable={!saving}
                 suppressContentEditableWarning={true}
                 placeholder="Mulai menulis dokumen di sini..."
               ></div>
             </div>
             <p className={`${styles.helpText} font-body-sm`}>
-              Press <kbd className={styles.kbd}>Ctrl</kbd> + <kbd className={styles.kbd}>S</kbd> to quick save draft.
+              Data Anda otomatis tersimpan setiap 15 detik jika ada perubahan.
             </p>
           </div>
 
@@ -271,7 +303,7 @@ export default function NewArticle() {
 
         {/* Actions Footer */}
         <div className={styles.footer}>
-          <Link href="/dashboard/articles" className={`${styles.btn} ${styles.btnCancel} font-label-md`} type="button" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>
+          <Link href={`/dashboard/articles/${id}`} className={`${styles.btn} ${styles.btnCancel} font-label-md`} type="button" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>
             Cancel
           </Link>
           
@@ -280,7 +312,7 @@ export default function NewArticle() {
               className={`${styles.btn} ${styles.btnSave} font-label-md`} 
               type="button"
               onClick={() => handleSubmit('draft')}
-              disabled={loading}
+              disabled={saving}
             >
               <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>save</span>
               Simpan Draft
@@ -289,7 +321,7 @@ export default function NewArticle() {
               className={`${styles.btn} ${styles.btnSubmit} font-label-md`} 
               type="button"
               onClick={() => handleSubmit('pending')}
-              disabled={loading}
+              disabled={saving}
             >
               <span className="material-symbols-outlined" style={{ fontSize: "18px", fontVariationSettings: "'FILL' 1" }}>send</span>
               Ajukan Validasi

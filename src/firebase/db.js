@@ -32,6 +32,19 @@ export const addArticle = async (articleData) => {
 };
 
 /**
+ * Updates an existing article in Firestore.
+ * @param {string} id - The article ID
+ * @param {Object} data - The updated article data
+ */
+export const updateArticle = async (id, data) => {
+  const docRef = doc(db, "articles", id);
+  await updateDoc(docRef, {
+    ...data,
+    updatedAt: serverTimestamp(),
+  });
+};
+
+/**
  * Gets all articles authored by a specific user.
  * @param {string} userId - The author's UID
  */

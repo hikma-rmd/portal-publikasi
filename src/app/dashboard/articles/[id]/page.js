@@ -61,10 +61,10 @@ export default function ArticleDetail() {
           Back to Articles
         </Link>
         <div className={styles.actionGroup}>
-          <button className={`${styles.actionBtn} ${styles.btnEdit} font-label-md`}>
+          <Link href={`/dashboard/articles/${id}/edit`} className={`${styles.actionBtn} ${styles.btnEdit} font-label-md`}>
             <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>edit</span>
             Edit
-          </button>
+          </Link>
           <button className={`${styles.actionBtn} ${styles.btnDelete} font-label-md`}>
             <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>delete</span>
             Delete
