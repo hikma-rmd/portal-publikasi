@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
+import { updateUserProfile } from "@/firebase/db";
 import { collection, query, where, getCountFromServer } from "firebase/firestore";
 import { db } from "@/firebase/config";
 
@@ -16,6 +17,29 @@ export default function UserProfile() {
 
   const [articleCount, setArticleCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState("");
+  const [error, setError] = useState("");
+  const [saveLoading, setSaveLoading] = useState(false);
+
+  const handleSave = async () => {
+    if (!name.trim()) {
+      setError("Full Name is required.");
+      return;
+    }
+    setSaveLoading(true);
+    setError("");
+    try {
+      await updateUserProfile(user.uid, { name: name.trim() });
+      setIsEditing(false);
+      window.location.reload(); // Refresh to update AuthContext
+    } catch (err) {
+      console.error(err);
+      setError("Failed to update profile.");
+    } finally {
+      setSaveLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -66,7 +90,7 @@ export default function UserProfile() {
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9RJzGBkBIn7Ba_Fnm_b9SqXSOJtTymDMB8HzsgrWRkS5FXm9tQblsW4oIVAyQ5hqim8RqLgUdYURY5mh1ev8TQwR78dERnXjMqu-ZJSCBlxi-My0Cp5UeBSMiVY18kpbVKYUrs7bUOsjJz2t0vSUJG4Qhz4meDZl1HF-b5DYp1a6zKufo0BwIL0VPKx-KcpaYfVdrNJOUNzeAht4zoPVl02v_YloxX68xeE0ciFY3ZHDQ7j7R7rMv-KadBwp_NjkxCU7dNumuwLQ" 
                 />
               </div>
-              <h2 className={`${styles.name} font-headline-md`}>{user?.email?.split('@')[0] || "User"}</h2>
+              <h2 className={`${styles.name} font-headline-md`}>{userData?.name || user?.email?.split('@')[0] || "User"}</h2>
               {/* Role Badge */}
               <div className={`${styles.roleBadge} font-label-sm`}>
                 {displayRole}
@@ -95,15 +119,56 @@ export default function UserProfile() {
           <div className={styles.detailsCard}>
             <div className={styles.cardHeader}>
               <h3 className={`${styles.cardTitle} font-headline-md`}>Personal Information</h3>
-              <button className={`${styles.editBtn} font-label-md`}>
-                <span className={`material-symbols-outlined ${styles.iconSmall}`}>edit</span>
-                Edit Profile
-              </button>
+              {isEditing ? (
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button 
+                    className={`${styles.editBtn} font-label-md`} 
+                    onClick={handleSave} 
+                    disabled={saveLoading}
+                    style={{ backgroundColor: 'var(--primary)', color: 'var(--on-primary)' }}
+                  >
+                    Save
+                  </button>
+                  <button 
+                    className={`${styles.editBtn} font-label-md`} 
+                    onClick={() => { setIsEditing(false); setError(""); }}
+                    disabled={saveLoading}
+                    style={{ backgroundColor: 'var(--surface-container-high)', color: 'var(--on-surface-variant)' }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button 
+                  className={`${styles.editBtn} font-label-md`}
+                  onClick={() => {
+                    setName(userData?.name || user?.email?.split('@')[0] || "");
+                    setIsEditing(true);
+                  }}
+                >
+                  <span className={`material-symbols-outlined ${styles.iconSmall}`}>edit</span>
+                  Edit Profile
+                </button>
+              )}
             </div>
             <div className={styles.infoGrid}>
               <div className={styles.infoItem}>
                 <span className={`${styles.infoLabel} font-label-sm`}>Full Name</span>
-                <span className={`${styles.infoValue} font-body-md`}>{user?.email?.split('@')[0] || "User"}</span>
+                {isEditing ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '100%' }}>
+                    <input 
+                      type="text" 
+                      className={`${styles.input} font-body-md`} 
+                      style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--outline)', width: '100%', backgroundColor: 'var(--surface-container-low)', color: 'var(--on-surface)' }}
+                      value={name} 
+                      onChange={(e) => setName(e.target.value)}
+                      disabled={saveLoading}
+                    />
+                    {error && <span className="font-body-sm text-error" style={{ color: 'var(--error)' }}>{error}</span>}
+                  </div>
+                ) : (
+                  <span className={`${styles.infoValue} font-body-md`}>{userData?.name || user?.email?.split('@')[0] || "User"}</span>
+                )}
               </div>
               <div className={styles.infoItem}>
                 <span className={`${styles.infoLabel} font-label-sm`}>Email Address</span>

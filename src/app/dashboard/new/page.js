@@ -21,6 +21,29 @@ export default function NewArticle() {
   const [lastSavedData, setLastSavedData] = useState("");
   
   const editorRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const MAX_SIZE = 2 * 1024 * 1024; // 2MB limit
+    if (file.size > MAX_SIZE) {
+      alert("Error: File size exceeds the 2MB limit. Image was rejected.");
+      e.target.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (editorRef.current) {
+        editorRef.current.focus();
+      }
+      document.execCommand('insertImage', false, event.target.result);
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -247,9 +270,21 @@ export default function NewArticle() {
                   <button className={styles.toolbarBtn} title="Insert Link" type="button">
                     <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>add_link</span>
                   </button>
-                  <button className={styles.toolbarBtn} title="Insert Image" type="button">
+                  <button 
+                    className={styles.toolbarBtn} 
+                    title="Insert Image" 
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
                     <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>image</span>
                   </button>
+                  <input 
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: "none" }}
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                  />
                 </div>
               </div>
 

@@ -150,6 +150,17 @@ export const getUserProfile = async (uid) => {
 };
 
 /**
+ * Update user profile details
+ */
+export const updateUserProfile = async (uid, profileData) => {
+  const docRef = doc(db, "users", uid);
+  await updateDoc(docRef, {
+    ...profileData,
+    updatedAt: serverTimestamp()
+  });
+};
+
+/**
  * Create user profile
  */
 export const createUserProfile = async (uid, email, role = "user") => {
