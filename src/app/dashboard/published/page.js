@@ -120,7 +120,7 @@ export default function PublishedArticles() {
                     </td>
                     <td>
                       <span className={`${styles.badge} ${getBadgeClass(article.status.toLowerCase())} font-label-sm`} style={{ textTransform: 'capitalize' }}>
-                        {article.status === 'Published' ? 'Disetujui' : article.status}
+                        {article.status?.toLowerCase() === 'published' ? 'Disetujui' : article.status}
                       </span>
                     </td>
                     <td className={styles.hiddenLg}>{formatDate(article.updatedAt || article.createdAt)}</td>

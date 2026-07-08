@@ -163,7 +163,9 @@ export default function MyArticles() {
                     </td>
                     <td>
                       <span className={`${styles.badge} ${getBadgeClass(article.status.toLowerCase())} font-label-sm`} style={{ textTransform: 'capitalize' }}>
-                        {article.status === 'Published' ? 'Disetujui' : article.status === 'Pending Review' ? 'Menunggu' : 'Draft'}
+                        {article.status?.toLowerCase() === 'published' ? 'Disetujui' : 
+                         (article.status?.toLowerCase() === 'pending review' || article.status?.toLowerCase() === 'pending') ? 'Menunggu' : 
+                         article.status?.toLowerCase() === 'rejected' ? 'Ditolak' : 'Draft'}
                       </span>
                     </td>
                     <td className={styles.hiddenLg}>{formatDate(article.createdAt)}</td>
@@ -173,10 +175,10 @@ export default function MyArticles() {
                         <Link href={`/dashboard/articles/${article.id}`} className={styles.actionBtn} title="View/Edit">
                           <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>edit</span>
                         </Link>
-                        {article.status === 'rejected' && (
-                          <button className={styles.actionBtn} title="Review Feedback">
+                        {article.status?.toLowerCase() === 'rejected' && (
+                          <Link href={`/dashboard/articles/${article.id}`} className={styles.actionBtn} title="Review Feedback">
                             <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>comment</span>
-                          </button>
+                          </Link>
                         )}
                         <button className={`${styles.actionBtn} ${styles.actionBtnDelete}`} title="Delete">
                           <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>delete</span>

@@ -84,7 +84,7 @@ export default function ReviewArticle() {
         <div>
           <span className={`${styles.statusBadge} font-label-sm`} style={{ textTransform: 'capitalize' }}>
             <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>
-              {article.status === 'pending' ? 'schedule' : article.status === 'published' ? 'check_circle' : 'cancel'}
+              {article.status?.toLowerCase().includes('pending') ? 'schedule' : article.status?.toLowerCase() === 'published' ? 'check_circle' : 'cancel'}
             </span>
             {article.status}
           </span>
@@ -177,7 +177,7 @@ export default function ReviewArticle() {
             </div>
             
             {/* Actions */}
-            {article.status === 'pending' && (
+            {(article.status?.toLowerCase() === 'pending' || article.status?.toLowerCase() === 'pending review') && (
               <div className={styles.actionStack}>
                 <button 
                   className={`${styles.btnApprove} font-label-md`} 

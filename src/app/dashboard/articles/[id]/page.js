@@ -95,14 +95,14 @@ export default function ArticleDetail() {
               {article.documentType === 'lpj' ? 'LPJ' : 'Mading'}
             </span>
             <span className={`${styles.badgeStatus} font-label-sm`} style={{ 
-              backgroundColor: article.status === 'published' ? 'var(--primary-container)' : article.status === 'rejected' ? 'var(--error-container)' : 'var(--secondary-container)',
-              color: article.status === 'published' ? 'var(--on-primary-container)' : article.status === 'rejected' ? 'var(--on-error-container)' : 'var(--on-secondary-container)',
+              backgroundColor: article.status?.toLowerCase() === 'published' ? 'var(--primary-container)' : article.status?.toLowerCase() === 'rejected' ? 'var(--error-container)' : 'var(--secondary-container)',
+              color: article.status?.toLowerCase() === 'published' ? 'var(--on-primary-container)' : article.status?.toLowerCase() === 'rejected' ? 'var(--on-error-container)' : 'var(--on-secondary-container)',
               textTransform: 'capitalize'
             }}>
               <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>
-                {article.status === 'published' ? 'check_circle' : article.status === 'rejected' ? 'cancel' : 'schedule'}
+                {article.status?.toLowerCase() === 'published' ? 'check_circle' : article.status?.toLowerCase() === 'rejected' ? 'cancel' : 'schedule'}
               </span>
-              {article.status === 'Published' ? 'Disetujui' : article.status === 'Pending Review' ? 'Menunggu' : article.status === 'rejected' ? 'Ditolak' : article.status}
+              {article.status?.toLowerCase() === 'published' ? 'Disetujui' : (article.status?.toLowerCase() === 'pending review' || article.status?.toLowerCase() === 'pending') ? 'Menunggu' : article.status?.toLowerCase() === 'rejected' ? 'Ditolak' : article.status}
             </span>
             <span className={`${styles.dateText} font-body-sm`}>{formatDate(article.createdAt)}</span>
           </div>

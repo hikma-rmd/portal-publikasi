@@ -28,37 +28,31 @@ export default function StaffDashboard() {
           baseQuery = query(articlesRef, where("authorId", "==", user.uid));
         }
 
-        // Fetch counts
-        const totalSnap = await getCountFromServer(baseQuery);
-        
-        const draftQ = userRole === "user" 
-          ? query(articlesRef, where("authorId", "==", user.uid), where("status", "==", "Draft")) 
-          : query(articlesRef, where("status", "==", "Draft"));
-        const draftSnap = await getCountFromServer(draftQ);
-        
-        const pendingQ = userRole === "user" 
-          ? query(articlesRef, where("authorId", "==", user.uid), where("status", "==", "Pending Review")) 
-          : query(articlesRef, where("status", "==", "Pending Review"));
-        const pendingSnap = await getCountFromServer(pendingQ);
-        
-        const pubQ = userRole === "user" 
-          ? query(articlesRef, where("authorId", "==", user.uid), where("status", "==", "Published")) 
-          : query(articlesRef, where("status", "==", "Published"));
-        const pubSnap = await getCountFromServer(pubQ);
-
-        setStats({
-          total: totalSnap.data().count,
-          draft: draftSnap.data().count,
-          pending: pendingSnap.data().count,
-          published: pubSnap.data().count,
-        });
-
-        // Fetch recent articles and sort in memory to avoid missing Firestore index errors
+        // Fetch all relevant articles
         const allDocsSnap = await getDocs(baseQuery);
         let articles = [];
         allDocsSnap.forEach(doc => {
           articles.push({ id: doc.id, ...doc.data() });
         });
+
+        // Calculate counts in memory to handle case variations (e.g. Published vs published)
+        let total = articles.length;
+        let draft = 0;
+        let pending = 0;
+        let published = 0;
+
+        articles.forEach(article => {
+          const status = article.status?.toLowerCase() || "";
+          if (status === "draft") {
+            draft++;
+          } else if (status.includes("pending")) {
+            pending++;
+          } else if (status === "published") {
+            published++;
+          }
+        });
+
+        setStats({ total, draft, pending, published });
         
         // Sort by createdAt descending
         articles.sort((a, b) => {

@@ -51,32 +51,61 @@ export const updateArticle = async (id, data) => {
 export const getUserArticles = async (userId) => {
   const q = query(
     collection(db, "articles"), 
-    where("authorId", "==", userId),
-    orderBy("createdAt", "desc")
+    where("authorId", "==", userId)
   );
   
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map(doc => ({
+  const articles = querySnapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data()
   }));
+
+  // Sort in memory to avoid Firestore index requirements
+  articles.sort((a, b) => {
+    const timeA = a.createdAt?.seconds || 0;
+    const timeB = b.createdAt?.seconds || 0;
+    return timeB - timeA;
+  });
+
+  return articles;
 };
 
 /**
- * Gets all articles with a specific status (e.g. 'pending' for editors)
+ * Gets all articles with a specific status (handles capitalization variations)
  */
 export const getArticlesByStatus = async (status) => {
+  let statuses = [status];
+  const lowerStatus = status.toLowerCase();
+  
+  if (lowerStatus === "published") {
+    statuses = ["published", "Published"];
+  } else if (lowerStatus === "pending" || lowerStatus === "pending review") {
+    statuses = ["pending", "Pending Review", "pending review", "Pending"];
+  } else if (lowerStatus === "draft") {
+    statuses = ["draft", "Draft"];
+  } else if (lowerStatus === "rejected") {
+    statuses = ["rejected", "Rejected"];
+  }
+
   const q = query(
     collection(db, "articles"), 
-    where("status", "==", status),
-    orderBy("createdAt", "desc")
+    where("status", "in", statuses)
   );
   
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map(doc => ({
+  const articles = querySnapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data()
   }));
+
+  // Sort in memory to avoid Firestore index requirements
+  articles.sort((a, b) => {
+    const timeA = a.createdAt?.seconds || 0;
+    const timeB = b.createdAt?.seconds || 0;
+    return timeB - timeA;
+  });
+
+  return articles;
 };
 
 /**
