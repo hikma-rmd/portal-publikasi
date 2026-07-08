@@ -10,6 +10,9 @@ export default function MyArticles() {
   const { user } = useAuth();
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -26,6 +29,15 @@ export default function MyArticles() {
 
     fetchArticles();
   }, [user]);
+
+  const filteredArticles = articles.filter(article => {
+    const matchesSearch = article.title ? article.title.toLowerCase().includes(searchQuery.toLowerCase()) : false;
+    const matchesCategory = selectedCategory ? article.category === selectedCategory : true;
+    const matchesStatus = selectedStatus 
+      ? (selectedStatus === 'pending' ? article.status?.toLowerCase().includes('pending') : article.status?.toLowerCase() === selectedStatus.toLowerCase())
+      : true;
+    return matchesSearch && matchesCategory && matchesStatus;
+  });
 
   // Format date helper
   const formatDate = (timestamp) => {
@@ -69,13 +81,19 @@ export default function MyArticles() {
               className={`${styles.searchInput} font-body-sm`} 
               placeholder="Search title or keyword..." 
               type="text" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           {/* Filters & Actions */}
           <div className={styles.filterGroup}>
             <div className={styles.selectContainer}>
-              <select className={`${styles.selectInput} font-body-sm`} defaultValue="">
-                <option disabled value="">Pilih Kategori</option>
+              <select 
+                className={`${styles.selectInput} font-body-sm`}
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
+                <option value="">Semua Kategori</option>
                 <option value="beasiswa">Beasiswa</option>
                 <option value="akademik">Akademik</option>
                 <option value="karir">Karir</option>
@@ -83,10 +101,21 @@ export default function MyArticles() {
               </select>
               <span className={`material-symbols-outlined ${styles.selectIcon}`}>arrow_drop_down</span>
             </div>
-            <button className={`${styles.filterBtn} font-label-sm`}>
-              <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>filter_list</span>
-              More Filters
-            </button>
+            
+            <div className={styles.selectContainer}>
+              <select 
+                className={`${styles.selectInput} font-body-sm`}
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+              >
+                <option value="">Semua Status</option>
+                <option value="draft">Draft</option>
+                <option value="pending">Menunggu</option>
+                <option value="published">Disetujui</option>
+                <option value="rejected">Ditolak</option>
+              </select>
+              <span className={`material-symbols-outlined ${styles.selectIcon}`}>arrow_drop_down</span>
+            </div>
           </div>
         </div>
 
@@ -109,12 +138,12 @@ export default function MyArticles() {
                 <tr>
                   <td colSpan="7" className="text-center py-4">Memuat dokumen...</td>
                 </tr>
-              ) : articles.length === 0 ? (
+              ) : filteredArticles.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="text-center py-4">Belum ada dokumen. Mulai buat dokumen baru!</td>
+                  <td colSpan="7" className="text-center py-4">Tidak ada dokumen yang cocok dengan pencarian/filter.</td>
                 </tr>
               ) : (
-                articles.map(article => (
+                filteredArticles.map(article => (
                   <tr key={article.id} className={styles.tableRow}>
                     <td>
                       <div className={styles.articleTitleBlock}>
