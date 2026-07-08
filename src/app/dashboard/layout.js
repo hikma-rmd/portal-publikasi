@@ -4,12 +4,13 @@ import styles from "./layout.module.css";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 export default function DashboardLayout({ children }) {
   const { user, userData, loading, signOut } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   const userRole = userData?.role || "user";
   const displayRole = userRole === "admin" ? "Administrator" : 
@@ -61,8 +62,8 @@ export default function DashboardLayout({ children }) {
         {/* Navigation Tabs */}
         <nav className={styles.nav}>
           {/* Active Tab: Dashboard */}
-          <Link href="/dashboard" className={`${styles.navLink} ${styles.navLinkActive}`}>
-            <span className={`material-symbols-outlined ${styles.icon}`} style={{ fontVariationSettings: "'FILL' 1" }}>
+          <Link href="/dashboard" className={`${styles.navLink} ${pathname === "/dashboard" ? styles.navLinkActive : ""}`}>
+            <span className={`material-symbols-outlined ${styles.icon}`} style={{ fontVariationSettings: pathname === "/dashboard" ? "'FILL' 1" : "" }}>
               dashboard
             </span>
             <span className="font-label-md">Dashboard</span>
@@ -70,36 +71,36 @@ export default function DashboardLayout({ children }) {
           {/* Inactive Tabs */}
           {userRole === "user" && (
             <>
-              <Link href="/dashboard/articles" className={styles.navLink}>
-                <span className={`material-symbols-outlined ${styles.icon}`}>description</span>
+              <Link href="/dashboard/articles" className={`${styles.navLink} ${pathname.startsWith("/dashboard/articles") ? styles.navLinkActive : ""}`}>
+                <span className={`material-symbols-outlined ${styles.icon}`} style={{ fontVariationSettings: pathname.startsWith("/dashboard/articles") ? "'FILL' 1" : "" }}>description</span>
                 <span className="font-label-md">Dokumen Saya</span>
               </Link>
-              <Link href="/dashboard/new" className={styles.navLink}>
-                <span className={`material-symbols-outlined ${styles.icon}`}>add_box</span>
+              <Link href="/dashboard/new" className={`${styles.navLink} ${pathname.startsWith("/dashboard/new") ? styles.navLinkActive : ""}`}>
+                <span className={`material-symbols-outlined ${styles.icon}`} style={{ fontVariationSettings: pathname.startsWith("/dashboard/new") ? "'FILL' 1" : "" }}>add_box</span>
                 <span className="font-label-md">Buat Dokumen</span>
               </Link>
             </>
           )}
           {userRole === "admin" && (
-            <Link href="/dashboard/categories" className={styles.navLink}>
-              <span className={`material-symbols-outlined ${styles.icon}`}>category</span>
+            <Link href="/dashboard/categories" className={`${styles.navLink} ${pathname.startsWith("/dashboard/categories") ? styles.navLinkActive : ""}`}>
+              <span className={`material-symbols-outlined ${styles.icon}`} style={{ fontVariationSettings: pathname.startsWith("/dashboard/categories") ? "'FILL' 1" : "" }}>category</span>
               <span className="font-label-md">Categories</span>
             </Link>
           )}
           {(userRole === "admin" || userRole === "editor") && (
             <>
-              <Link href="/dashboard/editor" className={styles.navLink}>
-                <span className={`material-symbols-outlined ${styles.icon}`}>pending_actions</span>
+              <Link href="/dashboard/editor" className={`${styles.navLink} ${pathname.startsWith("/dashboard/editor") ? styles.navLinkActive : ""}`}>
+                <span className={`material-symbols-outlined ${styles.icon}`} style={{ fontVariationSettings: pathname.startsWith("/dashboard/editor") ? "'FILL' 1" : "" }}>pending_actions</span>
                 <span className="font-label-md">Menunggu Validasi</span>
               </Link>
-              <Link href="/dashboard/published" className={styles.navLink}>
-                <span className={`material-symbols-outlined ${styles.icon}`}>task_alt</span>
+              <Link href="/dashboard/published" className={`${styles.navLink} ${pathname.startsWith("/dashboard/published") ? styles.navLinkActive : ""}`}>
+                <span className={`material-symbols-outlined ${styles.icon}`} style={{ fontVariationSettings: pathname.startsWith("/dashboard/published") ? "'FILL' 1" : "" }}>task_alt</span>
                 <span className="font-label-md">Arsip Dokumen</span>
               </Link>
             </>
           )}
-          <Link href="/dashboard/profile" className={styles.navLink}>
-            <span className={`material-symbols-outlined ${styles.icon}`}>person</span>
+          <Link href="/dashboard/profile" className={`${styles.navLink} ${pathname.startsWith("/dashboard/profile") ? styles.navLinkActive : ""}`}>
+            <span className={`material-symbols-outlined ${styles.icon}`} style={{ fontVariationSettings: pathname.startsWith("/dashboard/profile") ? "'FILL' 1" : "" }}>person</span>
             <span className="font-label-md">Profile</span>
           </Link>
         </nav>
