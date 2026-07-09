@@ -48,12 +48,12 @@ export default function DashboardLayout({ children }) {
         <div className={styles.header}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <img 
-              alt="Logo UINAM" 
+              alt="SIMADU Logo" 
               src="/logo.svg"
               style={{ width: '40px', height: '40px', objectFit: 'contain', borderRadius: '8px' }}
             />
             <h1 className={`${styles.title} font-headline-md`} style={{ fontSize: '1.1rem', lineHeight: '1.3' }}>
-              Himpunan Mahasiswa UINAM
+              SIMADU UINAM
             </h1>
           </div>
           <p className="font-body-sm text-on-surface-variant" style={{ marginTop: '8px' }}>{displayRole}</p>

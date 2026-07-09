@@ -52,12 +52,12 @@ export default function RegisterPage() {
           <div className="text-center mb-8 relative z-10">
             <div className="flex justify-center mb-4">
               <img 
-                alt="Portal Terpadu Kampus Logo" 
+                alt="SIMADU Logo" 
                 className="w-20 h-20 object-contain rounded-lg" 
                 src="/logo.svg"
               />
             </div>
-            <h1 className="font-headline-md text-on-surface mb-2">Portal Terpadu Kampus</h1>
+            <h1 className="font-headline-md text-on-surface mb-2">SIMADU</h1>
             <p className="font-body-sm text-on-surface-variant">Buat Akun Baru</p>
           </div>
           

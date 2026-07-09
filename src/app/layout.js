@@ -15,8 +15,8 @@ const outfit = Outfit({
 });
 
 export const metadata = {
-  title: "Campus Publication Portal",
-  description: "CMS for university publications",
+  title: "SIMADU - Portal Publikasi UINAM",
+  description: "Sistem Mading & Dokumen UINAM",
 };
 
 export default function RootLayout({ children }) {

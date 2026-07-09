@@ -59,7 +59,7 @@ export default function PublicHomepage() {
         <div className={styles.navInner}>
           <div className={styles.logoGroup}>
             <img src="/logo.svg" alt="Logo" className={styles.logo} />
-            <span className="font-headline-md text-primary">Portal Terpadu Kampus</span>
+            <span className="font-headline-md text-primary">SIMADU</span>
           </div>
           <div>
             <Link href="/login" className={`${styles.loginBtn} font-label-md`}>
@@ -142,7 +142,7 @@ export default function PublicHomepage() {
       {/* Footer */}
       <footer className={styles.footer}>
         <p className="font-body-sm text-on-surface-variant">
-          © 2026 Portal Terpadu Organisasi Kampus. All rights reserved.
+          © 2026 SIMADU UINAM. All rights reserved.
         </p>
       </footer>
     </div>
