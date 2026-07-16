@@ -3,10 +3,11 @@
 import styles from "./page.module.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { getArticlesByStatus } from "@/firebase/db";
+import { getArticlesByStatus, getUserProfile } from "@/firebase/db";
 
 export default function EditorDashboard() {
   const [pendingArticles, setPendingArticles] = useState([]);
+  const [authorNames, setAuthorNames] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,6 +15,24 @@ export default function EditorDashboard() {
       try {
         const articles = await getArticlesByStatus("pending");
         setPendingArticles(articles);
+        
+        // Fetch author names based on authorId
+        const uids = [...new Set(articles.map(a => a.authorId))].filter(Boolean);
+        const nameMap = {};
+        await Promise.all(uids.map(async (uid) => {
+          try {
+            const profile = await getUserProfile(uid);
+            if (profile && profile.name) {
+              nameMap[uid] = profile.name;
+            } else {
+              nameMap[uid] = `ID: ${uid.substring(0, 6)}...`;
+            }
+          } catch (e) {
+            console.error(`Error fetching profile for ${uid}:`, e);
+            nameMap[uid] = `ID: ${uid.substring(0, 6)}...`;
+          }
+        }));
+        setAuthorNames(nameMap);
       } catch (error) {
         console.error("Error fetching pending articles:", error);
       }
@@ -98,7 +117,7 @@ export default function EditorDashboard() {
             <thead className="font-label-md">
               <tr>
                 <th>Judul</th>
-                <th>ID Pengirim</th>
+                <th>Pengirim</th>
                 <th>Kategori</th>
                 <th>Jenis</th>
                 <th>Tanggal Masuk</th>
@@ -122,7 +141,9 @@ export default function EditorDashboard() {
                       <p className={`${styles.articleTitle} font-body-md`}>{article.title}</p>
                     </td>
                     <td>
-                      <p className={`${styles.authorName} font-body-sm`}>{article.authorId}</p>
+                      <p className={`${styles.authorName} font-body-sm`}>
+                        {authorNames[article.authorId] || article.authorId}
+                      </p>
                     </td>
                     <td>
                       <span className={`${styles.badge} ${styles.badgeCategory}`}>{article.category || "None"}</span>
@@ -150,10 +171,12 @@ export default function EditorDashboard() {
 
         {/* Pagination */}
         <div className={styles.pagination}>
-          <p className={`${styles.pageInfo} font-body-sm`}>Showing 1 to 4 of 24 entries</p>
+          <p className={`${styles.pageInfo} font-body-sm`}>
+            Showing {pendingArticles.length > 0 ? 1 : 0} to {pendingArticles.length} of {pendingArticles.length} entries
+          </p>
           <div className={styles.pageControls}>
             <button className={`${styles.pageBtn} font-body-sm`} disabled>Previous</button>
-            <button className={`${styles.pageBtn} font-body-sm`}>Next</button>
+            <button className={`${styles.pageBtn} font-body-sm`} disabled={pendingArticles.length <= 10}>Next</button>
           </div>
         </div>
       </div>

@@ -218,6 +218,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: background-color 200ms;
+  white-space: nowrap;
 }
 
 .reviewBtn:hover {
