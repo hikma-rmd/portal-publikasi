@@ -18,7 +18,7 @@ export default function PublicHomepage() {
         // Using in-memory sorting since we might not have a composite index set up yet
         const q = query(
           articlesRef, 
-          where("status", "==", "Published"),
+          where("status", "in", ["published", "Published"]),
           where("documentType", "==", "pengumuman")
         );
         
